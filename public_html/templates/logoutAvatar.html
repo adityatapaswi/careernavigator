@@ -1,0 +1,43 @@
+<div class="dropdown">
+    <a href="" class="account" >
+        <img src="./img/logo.png" class="profile-circle"/>
+    </a>
+    <div class="submenu" style="display: none; ">
+        <ul class="root">
+                       <li>
+                <a href="#">Sign Out</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<script>
+    $(document).ready(function ()
+    {
+        $(".account").click(function ()
+        {
+            var X = $(this).attr('id');
+            if (X == 1)
+            {
+                $(".submenu").hide();
+                $(this).attr('id', '0');
+            } else
+            {
+                $(".submenu").show();
+                $(this).attr('id', '1');
+            }
+        });
+        $(".submenu").mouseup(function ()
+        {
+            return false
+        });
+        $(".account").mouseup(function ()
+        {
+            return false
+        });
+        $(document).mouseup(function ()
+        {
+            $(".submenu").hide();
+            $(".account").attr('id', '');
+        });
+    });
+</script>

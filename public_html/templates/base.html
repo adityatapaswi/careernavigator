@@ -1,0 +1,47 @@
+<div class="main-container">
+    <div class="main wrapper clearfix">
+
+        <article>
+            <header>
+                <h1>About This Site</h1>
+                <p>Career Navigator is a smart tool which will let you choose your career path. It will suggest you with the courses and other options which will help you for a brighter future.</p>
+            </header>
+            <footer>
+                <h2>Why You Need This?</h2>
+                <p>Students generally get confused at what path they should choose after their secondary school and hence there is a need of this system to help them what they can do to make the best out of their lives instead of ending up pursuing a forced career selected by their parents.</p>
+           
+                <h2>What Do We Do?</h2>
+                <p>We gather marks of the secondary school of students and give them career recommendations which will be best for them. They can choose any of their career path from the recommendations or can still go with their personal preferences.</p>
+            
+            
+                <h3>Who Are Involved?</h3>
+                <p>We are involving the students as well as the higher secondary institutes to collaborate and make the best use of this platform. On one hand there are students who need help in seeking a good career where as on the other there are some quality colleges ready to develop some real talents.</p>
+            </footer>
+        </article>
+
+        <aside>
+
+            <div class="container" ng-controller="LoginController">
+                <div class="card card-container">
+                    <h2 style="color: white">Login</h2>
+                    <p id="profile-name" class="profile-name-card"></p>
+                    <form class="form-signin">
+                        <span id="reauth-email" class="reauth-email"></span>
+                        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
+                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                        <div id="remember" class="checkbox">
+                            <label>
+                                <input type="checkbox" value="remember-me"> Show Password
+                            </label>
+                        </div>
+                        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" ng-click="login();">Sign in</button>
+                    </form><!-- /form -->
+                    <a href="#" class="forgot-password">
+                        Forgot the password?
+                    </a>
+                </div><!-- /card-container -->
+            </div><!-- /container -->
+        </aside>
+
+    </div> <!-- #main -->
+</div> <!-- #main-container -->

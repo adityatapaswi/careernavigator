@@ -1,0 +1,19 @@
+<ng-include src="'templates/menu.html'"></ng-include>
+
+<div class="container" ng-controller="DashboardController">
+    <div class="center-div">
+        <h3>Profile Completeness</h3>
+        <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
+                                                            chart-data="profileCompletionCount"  chart-options="options" chart-labels="profileCompletionKey">
+            </canvas> 
+        </div>
+    </div>
+    <div class="center-div">
+         <h3>Matching Colleges</h3>
+        <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
+                                                            chart-data="collegeMatchCount"  chart-options="options" chart-labels="collegeMatchKey">
+            </canvas> 
+        </div>
+    </div>
+   
+</div>

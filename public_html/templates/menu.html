@@ -1,0 +1,31 @@
+<div class="navbar" ng-controller="RightMenuController">
+        <div class="contaier">
+
+            <div class="navbar-header">
+                <button class="toggle"><span></span>
+                    <span></span>
+                    <span></span></button>
+                <!--<a href="" class="navbar-brand">Hello World</a>-->
+            </div><!-- navbar-header -->
+
+            <ul class="nav navcollaps">
+                <li><a href="#/home/dashboard">Dashboard</a></li>
+                <li><a href="#/searchColleges">Search Colleges</a></li>
+                <li><a href="#/home/dashboard">Manage Your Profile</a></li>
+                <li><a href="#/home/dashboard">Manage Courses</a></li>
+                <li><a href="#/home/dashboard">View Applications</a></li>
+                <li><a href="#/home/dashboard" ng-click="logout();">Logout</a></li>
+               
+            </ul>
+
+        </div><!-- contaier -->
+       
+    </div><!-- navbar -->
+
+
+
+<script>
+    $(".toggle").click(function () {
+        $(".navcollaps").toggleClass("show");
+    });
+</script>
