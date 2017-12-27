@@ -78,6 +78,9 @@ recomSubApp.controller('SearchCollegeController', function ($scope, $location, $
     $scope.search = function () {
         $location.path("/searchCollegeResults");
     };
+    $scope.apply = function () {
+        $location.path("/applyToCollege");
+    };
 });
 recomSubApp.controller('LoginController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
 

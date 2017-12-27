@@ -25,7 +25,7 @@
                 <td data-label="Seats Available"><span class="green" ng-class="{red: college.seatsAvailable <= 10}">{{college.seatsAvailable}}</span></td>
                 <!--<td data-label="Type"><span class="green" ng-class="{red: transaction.type === 'DB'}">{{transaction.type}}</span></td>-->
                 <td data-label="">
-                    <button class="btn btn-info">Apply</button>
+                    <button class="btn btn-info" ng-click="apply();">Apply</button>
                     <button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>
                 </td>
 

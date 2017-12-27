@@ -59,6 +59,9 @@ recomApp.config(['$routeProvider', '$locationProvider',
         }).when('/searchCollegeResults', {
             templateUrl: 'templates/searchCollegeResults.html',
             activetab: 'Home'
+        }).when('/applyToCollege', {
+            templateUrl: 'templates/applyToCollege.html',
+            activetab: 'Home'
         }).otherwise({
             redirectTo: '/home'
         });
