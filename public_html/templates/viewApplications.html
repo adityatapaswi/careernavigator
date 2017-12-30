@@ -1,0 +1,62 @@
+<ng-include src="'templates/menu.html'"></ng-include>
+<div class="container" ng-controller="ViewApplicationsController">
+  
+    <table>
+        <caption>Your Applications (For Student)</caption>
+        <thead>
+            <tr>
+                <th scope="col">College Name</th>
+                <th scope="col">Applied On</th>
+                <th scope="col">Applied For</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="application in applications">
+                <td data-label="College Name">{{application.collegeName}}</td>
+                <td data-label="Applied On">{{application.on}}</td>
+                <td data-label="Applied For">{{application.appliedFor}}</td>
+                <td data-label="Status"><span  ng-class="{orange: application.status === 'Pending',red: application.status === 'Rejected',green: application.status === 'Selected'}">{{application.status}}</span></td>
+                <td data-label="">
+                    <button class="btn btn-info" ng-show="application.status==='Selected'" ng-click="apply();">Complete Payment</button>
+                    <button class="btn btn-danger" title="Delete Application" ng-click="deleteApplication();" ng-hide="application.status==='Selected'"><i class="fa fa-lg fa-trash"></i></button>
+                    <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
+                </td>
+
+            </tr>
+
+        </tbody>
+    </table>
+    <table>
+        <caption>Applications (For College)</caption>
+        <thead>
+            <tr>
+                <th scope="col">Applicant's Name</th>
+                <th scope="col">Applied On</th>
+                <th scope="col">Applied For</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="application in applications">
+                <td data-label="College Name">{{application.name}}</td>
+                <td data-label="Applied On">{{application.on}}</td>
+                <td data-label="Applied For">{{application.appliedFor}}</td>
+                <td data-label="Status"><span  ng-class="{orange: application.status === 'Pending',red: application.status === 'Rejected',green: application.status === 'Selected'}">{{application.status}}</span></td>
+                <td data-label="">
+                    <button class="btn btn-info" ng-show="application.status==='Pending'" ng-click="apply();"><i class="fa fa-lg fa-eye"></i> Review Application</button>
+                    <button class="btn btn-info" ng-show="application.status==='Selected'" ng-click="apply();"><i class="fa fa-lg fa-send"></i> Send Admit Card</button>
+                    <!--<button class="btn btn-danger" title="Delete Application" ng-click="delete();"><i class="fa fa-lg fa-trash"></i></button>-->
+                    <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
+                </td>
+
+            </tr>
+
+        </tbody>
+    </table>
+    <br>
+</div>

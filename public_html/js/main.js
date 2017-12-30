@@ -59,6 +59,21 @@ recomApp.config(['$routeProvider', '$locationProvider',
         }).when('/searchCollegeResults', {
             templateUrl: 'templates/searchCollegeResults.html',
             activetab: 'Home'
+        }).when('/manageCourses', {
+            templateUrl: 'templates/manageCourses.html',
+            activetab: 'Home'
+        }).when('/viewApplications', {
+            templateUrl: 'templates/viewApplications.html',
+            activetab: 'Home'
+        }).when('/manageDocuments', {
+            templateUrl: 'templates/manageDocuments.html',
+            activetab: 'Home'
+        }).when('/manageProfile', {
+            templateUrl: 'templates/manageProfile.html',
+            activetab: 'Home'
+        }).when('/changePassword', {
+            templateUrl: 'templates/changePassword.html',
+            activetab: 'Home'
         }).when('/applyToCollege', {
             templateUrl: 'templates/applyToCollege.html',
             activetab: 'Home'

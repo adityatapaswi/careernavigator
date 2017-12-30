@@ -95,6 +95,9 @@ body {
 .title {
     color: white;
 }
+.orange{
+    color: orange;
+}
 .green
 {
     color: green;
@@ -453,8 +456,8 @@ a:hover{
 }
 
 /*-------------------------------------*/
-    /*Profile Card Style*/
-  /*--------------------*/
+/*Profile Card Style*/
+/*--------------------*/
 
 .border-tlr-radius { 
     border-top-left-radius: 2px;
@@ -462,6 +465,7 @@ a:hover{
 }
 
 .text-center { text-align: center; }
+.right { text-align: right; }
 
 .radius { border-radius: 2px; }
 
@@ -621,13 +625,13 @@ a:hover{
     color: #eee;
 }
 /*----------------------------------*/
-        /*Thumbnail Styles*/
+/*Thumbnail Styles*/
 /*------------------------------*/
 .thumbnail{
     text-align: center;
     font-weight: bold;
     color: #155FB0;
-     border: 2px solid #ddd; /* Gray border */
+    border: 2px solid #ddd; /* Gray border */
     border-radius: 4px;  /* Rounded border */
     padding: 5px; /* Some padding */
     width: 150px; /* Set a small width */
@@ -1045,7 +1049,7 @@ table th {
    ========================================================================== */
 .rating { 
     border: none;
-    
+
     float: left;
 }
 
@@ -1236,6 +1240,185 @@ table th {
 
 .clearfix {
     *zoom: 1;
+}
+
+/* ==========================================================================
+  Documents Style
+   ========================================================================== */
+
+#wrapper {
+    width: 100%;
+    margin: 0 auto;
+}
+
+
+div.gallery {
+    margin: 2%;
+    border: 1px solid #ccc;
+    float: left;
+    background: #d1e8d1;
+    width: 20%;
+}
+
+div.gallery:hover {
+    /*border: 2px solid #777;*/
+
+
+    background: #fff;
+
+    /*border: 2px solid transparent;*/
+
+    -moz-border-image: -moz-linear-gradient(top, #147014 0%, #198c19 100%);
+    -webkit-border-image: -webkit-linear-gradient(top, #147014 0%, #198c19 100%);
+    border-image: linear-gradient(to bottom, #147014 0%, #198c19 100%);
+
+    border-image-slice: 1;
+    transition: all 0.3s ease-in-out;
+}
+
+div.gallery .img-thumb {
+    width: 100%;
+    cursor: pointer;
+    height: 135px;
+}
+
+div.desc {
+    padding: 5px;
+    color: #147014;
+    text-align: center;
+}
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    padding-top: 100px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
+}
+
+/* Modal Content (Image) */
+
+
+/* Caption of Modal Image (Image Text) - Same Width as the Image */
+#caption {
+
+    color:#147014;
+    margin: auto;
+    display: block;
+    width: 80%;
+    font-size: 20px;
+    font-weight: bold;
+    max-width: 700px;
+    text-align: center;
+    /*color: #ccc;*/
+    padding: 10px 0;
+    /*height: 150px;*/
+}
+
+/* Add Animation - Zoom in the Modal */
+.modal-content{
+
+    width: auto;
+    height: 50%;
+    margin: 0 auto;
+}
+.modal-backdrop{
+    z-index: 0;
+}
+.modal-image{
+    margin: 0 auto;
+    max-width: 100%;
+    display: block
+}
+.modal-content, #caption { 
+    -webkit-animation-name: zoom;
+    -webkit-animation-duration: 0.6s;
+    animation-name: zoom;
+    animation-duration: 0.6s;
+}
+
+@-webkit-keyframes zoom {
+    from {-webkit-transform:scale(0)} 
+    to {-webkit-transform:scale(1)}
+}
+
+@keyframes zoom {
+    from {transform:scale(0)} 
+    to {transform:scale(1)}
+}
+.modal-body .time{
+    font-size: 1.5rem;
+    margin-top: 10px;
+    color: #bbb;
+    /*margin-left: 0.8rem;*/
+}
+/* The Close Button */
+.close {
+    position: absolute;
+    top: 15px;
+    right: 35px;
+    color: #f1f1f1;
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.close:hover,
+.close:focus {
+    color: #bbb;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+
+@media screen and (max-width: 550px) {
+    div.gallery {
+        display: block;
+        width: 100%;
+    }
+}
+
+
+/* ==========================================================================
+   Add Button
+   ========================================================================== */
+.blue-circle-button {
+    box-shadow: 2px 4px 0 2px rgba(0,0,0,0.1);
+    border: .5em solid #003366;
+    font-size: 1em;
+    line-height: 1.1em;
+    
+    color: #ffffff;
+    background-color: #003366;
+    margin: auto;
+    border-radius: 50%;
+    height: 4em;
+    width: 4em;
+    position: relative;
+}
+.blue-circle-button:hover {
+    color:#ffffff;
+   border-color : #002851;
+    background-color: #003366;
+    text-decoration: none;
+    
+
+}
+.blue-circle-button:visited, .blue-circle-button:focus {
+    color:#ffffff;
+   border-color : #002851;
+    background-color: #003366;
+    text-decoration: none;
+    outline:none;
+
+}
+.blue-circle-link-greater-than {
+    font-size: 1em;
 }
 
 /* ==========================================================================

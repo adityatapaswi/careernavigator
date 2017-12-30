@@ -9,6 +9,111 @@ recomSubApp.controller('RightMenuController', function ($scope, $location, $wind
     };
 });
 
+recomSubApp.controller('ViewApplicationsController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
+ $scope.applications = [
+        {
+            appliedFor: "B.S.C",
+            collegeName: "D.Y. Patil, Pimpri",
+            name:'Payal Patil',
+            on: "30-Dec-2017",
+            status:'Rejected'
+        },
+        {
+            appliedFor: "B.S.C",
+            collegeName: "Jaihind Jr. College, Pimpri",
+            name:'Aditya Tapaswi',
+            on: "29-Dec-2017",
+            status:'Selected'
+        },
+        {
+            appliedFor: "B.S.C",
+            collegeName: "Ness Wadia, Pune",
+            name:'Priyanka Lele',
+            on: "28-Dec-2017",
+            status:'Pending'
+        },
+        {
+            appliedFor: "B.S.C",
+            name:'Nivedita Agarmore',
+            collegeName: "Fergusion, Pune",
+            on: "20-Dec-2017",
+            status:'Pending'
+        }
+    ];
+});
+recomSubApp.controller('ManageCoursesController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.courses = [
+        {
+            name: "B.S.C",
+            totalSeats: "100",
+            gen: 51,
+            genFees: 15000,
+            scnt: 22,
+            scntFees: 2000,
+            obc: 27,
+            obcFees: 7500
+
+        },
+        {
+            name: "B.A.M.S",
+            totalSeats: "100",
+            gen: 51,
+            genFees: 15000,
+            scnt: 22,
+            scntFees: 2000,
+            obc: 27,
+            obcFees: 7500
+
+        },
+        {
+            name: "M.B.B.S",
+            totalSeats: "100",
+            gen: 51,
+            genFees: 15000,
+            scnt: 22,
+            scntFees: 2000,
+            obc: 27,
+            obcFees: 7500
+
+        },
+        {
+            name: "B.D.S",
+            totalSeats: "100",
+            gen: 51,
+            genFees: 15000,
+            scnt: 22,
+            scntFees: 2000,
+            obc: 27,
+            obcFees: 7500
+
+        },
+        {
+            name: "B.C.A",
+            totalSeats: "100",
+            gen: 51,
+            genFees: 15000,
+            scnt: 22,
+            scntFees: 2000,
+            obc: 27,
+            obcFees: 7500
+
+        }
+    ];
+});
+recomSubApp.controller('ManageProfileController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = {name: "Aditya",
+        email: "aditya@gmail.com",
+        city: "Pune",
+        state: "Maharashtra",
+        zip: 411033,
+        phone: "9021280829",
+        website: "www.adityainstitute.com"};
+    $scope.user.userType = 'institute';
+//    $scope.user.userType='student';
+    $scope.changePassword = function () {
+        $location.path("/changePassword");
+    };
+});
 recomSubApp.controller('DashboardController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.profileCompletionCount = [70, 30];
     $scope.profileCompletionKey = ["Complete", "Incomplete"];
@@ -34,7 +139,7 @@ recomSubApp.controller('SearchCollegeController', function ($scope, $location, $
             name: "Fergussion College Pune",
             rating: 4,
             seatsAvailable: 4,
-            course: "B.S.C", 
+            course: "B.S.C",
             fees: "12000",
             address: "Pune"
 
