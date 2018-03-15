@@ -4,16 +4,65 @@
     <div class="center-div">
         <h3>Profile Completeness</h3>
         <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
-                                                            chart-data="profileCompletionCount"  chart-options="options" chart-labels="profileCompletionKey">
+                                                                            chart-data="profileCompletionCount"  chart-options="options" chart-labels="profileCompletionKey">
             </canvas> 
         </div>
     </div>
-    <div class="center-div">
-         <h3>Matching Colleges</h3>
-        <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
-                                                            chart-data="collegeMatchCount"  chart-options="options" chart-labels="collegeMatchKey">
-            </canvas> 
+
+    <br>
+    <div class="card-timeline radius shadowDepth1">
+        <!--        <div class="card__image border-tlr-radius">
+                    <img src="https://blogs.vmware.com/networkvirtualization/files/2017/01/News-Image.jpg" alt="{{event.eventType}}" class="border-tlr-radius">
+                </div>-->
+
+        <div class="card__content card__padding">
+
+            <div class="card__meta">
+
+                <img src="img/male.png" ng-show="user.gender === 'Male'" height="50" width="50" alt="user">
+                <img src="img/female.png" ng-show="user.gender === 'Female'" height="50" width="50" alt="user">
+                <h2>{{user.name}}</h2>
+                <a href="">{{user.dob}}</a>
+            </div>
+
+            <article class="card__article">
+                <div ng-show="user.type === 'student'">
+                    <h4><strong>Profile Summary</strong></h4>
+
+                    <hr>
+                    <h4><strong>Educational Details</strong></h4>
+                    <hr>
+                    <p>Highest Education: {{user.max_qualification}}</p>
+                    <p>Major: {{user.major}}</p>
+                    <p>Percentage: {{user.percentage}}</p>
+                    <hr> 
+                </div>
+                <h4><strong>Contact Details</strong></h4>
+                <hr>
+                <p>City: {{user.city}}</p>
+                <p>State: {{user.state}}</p>
+                <p>Zip: {{user.zip}}</p>
+                <p ng-show="user.contact_person">Contact Person: {{user.contact_person}}</p>
+                <p>Contact: {{user.contact}}</p>
+                <p ng-show="user.website">Web Site: <a target="_blank" href="{{'http://'+user.website}}">{{user.website}}</a></p>
+
+
+            </article>
+            <hr>
+
+
+        </div>
+
+    </div>
+    <div ng-controller="DocsController" ng-init="getDocuments();">
+        <h4><strong>Your Documents</strong></h4>
+        <div class="col-lg-12 well">
+            <div class="gallery"  ng-repeat="doc in docs" ng-click="viewDocument(doc)">
+                <img class="img-thumb" src="./img/337946.svg">
+                <div class="desc">{{doc.document_name}}
+                </div>
+            </div>
         </div>
     </div>
-   
+
 </div>

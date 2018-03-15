@@ -25,16 +25,16 @@
                 <div class="card card-container">
                     <h2 style="color: white">Login</h2>
                     <p id="profile-name" class="profile-name-card"></p>
-                    <form class="form-signin">
+                    <form class="form-signin" ng-submit="login();">
                         <span id="reauth-email" class="reauth-email"></span>
-                        <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required autofocus>
-                        <input type="password" id="inputPassword" class="form-control" placeholder="Password" required>
+                        <input type="email" id="inputEmail" ng-model="user.username" class="form-control" placeholder="Email address" required autofocus>
+                        <input type="{{showHidePassword}}" ng-model="user.password" id="inputPassword" class="form-control" placeholder="Password" required>
                         <div id="remember" class="checkbox">
                             <label>
-                                <input type="checkbox" value="remember-me"> Show Password
+                                <input type="checkbox" value="remember-me" ng-model="showPassword" ng-change="togglePassword()"> Show Password
                             </label>
                         </div>
-                        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit" ng-click="login();">Sign in</button>
+                        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button>
                     </form><!-- /form -->
                     <a href="#" class="forgot-password">
                         Forgot the password?

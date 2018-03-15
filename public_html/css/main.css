@@ -1256,7 +1256,7 @@ div.gallery {
     margin: 2%;
     border: 1px solid #ccc;
     float: left;
-    background: #d1e8d1;
+    background: #E5E9ED;
     width: 20%;
 }
 
@@ -1268,9 +1268,9 @@ div.gallery:hover {
 
     /*border: 2px solid transparent;*/
 
-    -moz-border-image: -moz-linear-gradient(top, #147014 0%, #198c19 100%);
-    -webkit-border-image: -webkit-linear-gradient(top, #147014 0%, #198c19 100%);
-    border-image: linear-gradient(to bottom, #147014 0%, #198c19 100%);
+    -moz-border-image: -moz-linear-gradient(top, #002851 0%, #002851 100%);
+    -webkit-border-image: -webkit-linear-gradient(top, #002851 0%, #002851 100%);
+    border-image: linear-gradient(to bottom, #002851 0%, #002851 100%);
 
     border-image-slice: 1;
     transition: all 0.3s ease-in-out;
@@ -1284,7 +1284,7 @@ div.gallery .img-thumb {
 
 div.desc {
     padding: 5px;
-    color: #147014;
+    color: #002851;
     text-align: center;
 }
 .modal {

@@ -1,8 +1,8 @@
 <ng-include src="'templates/menu.html'"></ng-include>
 <div class="container" ng-controller="ViewApplicationsController">
   
-    <table>
-        <caption>Your Applications (For Student)</caption>
+    <table ng-show="user.type=='student'">
+        <caption>Your Applications</caption>
         <thead>
             <tr>
                 <th scope="col">College Name</th>
@@ -29,8 +29,8 @@
 
         </tbody>
     </table>
-    <table>
-        <caption>Applications (For College)</caption>
+    <table ng-show="user.type=='college'">
+        <caption>Applications</caption>
         <thead>
             <tr>
                 <th scope="col">Applicant's Name</th>

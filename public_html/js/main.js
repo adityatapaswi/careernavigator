@@ -1,4 +1,4 @@
-var recomApp = angular.module('app.recomsys', ['ngCookies', 'ngResource', 'ngRoute', "ngTable", 'ngFileSaver', 'ngMessages', 'ngSanitize', 'selectize', '720kb.datepicker', 'ui.bootstrap', 'chart.js', 'ngAlertify', 'angular-thumbnails', 'app.recomsys.sub']);
+var recomApp = angular.module('app.recomsys', ['ngCookies','pdfjsViewer','file-model', 'ngResource', 'ngRoute', "ngTable", 'ngFileSaver', 'ngMessages', 'ngSanitize', 'selectize', '720kb.datepicker', 'ui.bootstrap', 'chart.js', 'ngAlertify', 'angular-thumbnails', 'app.recomsys.sub']);
 recomApp.config(
         function ($compileProvider)
         {
@@ -21,7 +21,7 @@ recomApp.run(function ($rootScope, $route, $location, $cookieStore, $templateCac
         }
         else
         {
-             $rootScope.$broadcast('showUserName', {
+            $rootScope.$broadcast('showUserName', {
                 show: false
             });
         }
@@ -41,45 +41,62 @@ recomApp.config(['$routeProvider', '$locationProvider',
                 when('/#', {
                     templateUrl: 'templates/base.html',
                     activetab: 'Home'
-                }).when('/home', {
-            templateUrl: 'templates/base.html',
-            activetab: 'Home'
-        }).when('/login', {
-            templateUrl: 'templates/login.html',
-            activetab: 'Home'
-        }).when('/signup', {
-            templateUrl: 'templates/signup.html',
-            activetab: 'Home'
-        }).when('/home/dashboard', {
-            templateUrl: 'templates/dashboard.html',
-            activetab: 'Home'
-        }).when('/searchColleges', {
-            templateUrl: 'templates/searchColleges.html',
-            activetab: 'Home'
-        }).when('/searchCollegeResults', {
-            templateUrl: 'templates/searchCollegeResults.html',
-            activetab: 'Home'
-        }).when('/manageCourses', {
-            templateUrl: 'templates/manageCourses.html',
-            activetab: 'Home'
-        }).when('/viewApplications', {
-            templateUrl: 'templates/viewApplications.html',
-            activetab: 'Home'
-        }).when('/manageDocuments', {
-            templateUrl: 'templates/manageDocuments.html',
-            activetab: 'Home'
-        }).when('/manageProfile', {
-            templateUrl: 'templates/manageProfile.html',
-            activetab: 'Home'
-        }).when('/changePassword', {
-            templateUrl: 'templates/changePassword.html',
-            activetab: 'Home'
-        }).when('/applyToCollege', {
-            templateUrl: 'templates/applyToCollege.html',
-            activetab: 'Home'
-        }).otherwise({
-            redirectTo: '/home'
-        });
+                })
+                .when('/home', {
+                    templateUrl: 'templates/base.html',
+                    activetab: 'Home'
+                })
+                .when('/login', {
+                    templateUrl: 'templates/login.html',
+                    activetab: 'Home'
+                })
+                .when('/signup', {
+                    templateUrl: 'templates/signup.html',
+                    activetab: 'Home'
+                })
+                .when('/home/dashboard', {
+                    templateUrl: 'templates/dashboard.html',
+                    activetab: 'Home'
+                })
+                .when('/searchColleges', {
+                    templateUrl: 'templates/searchColleges.html',
+                    activetab: 'Home'
+                })
+                .when('/searchCollegeResults', {
+                    templateUrl: 'templates/searchCollegeResults.html',
+                    activetab: 'Home'
+                })
+                .when('/addStream', {
+                    templateUrl: 'templates/addCourse.html',
+                    activetab: 'Home'
+                })
+                .when('/manageCourses', {
+                    templateUrl: 'templates/manageCourses.html',
+                    activetab: 'Home'
+                })
+                .when('/viewApplications', {
+                    templateUrl: 'templates/viewApplications.html',
+                    activetab: 'Home'
+                })
+                .when('/manageDocuments', {
+                    templateUrl: 'templates/manageDocuments.html',
+                    activetab: 'Home'
+                })
+                .when('/manageProfile', {
+                    templateUrl: 'templates/manageProfile.html',
+                    activetab: 'Home'
+                })
+                .when('/changePassword', {
+                    templateUrl: 'templates/changePassword.html',
+                    activetab: 'Home'
+                })
+                .when('/applyToCollege', {
+                    templateUrl: 'templates/applyToCollege.html',
+                    activetab: 'Home'
+                })
+                .otherwise({
+                    redirectTo: '/home'
+                });
     }]);
 
 
@@ -118,7 +135,7 @@ recomApp.controller('NavController', function ($scope, $location, $window, $cook
     $scope.$on('showUserName', function (event, args) {
         if (args.show) {
             $scope.user = args;
-               $scope.menuItems[1].show = false;
+            $scope.menuItems[1].show = false;
             $scope.menuItems[0].show = false;
             $scope.menuItems[2].show = false;
         }

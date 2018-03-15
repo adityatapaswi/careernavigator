@@ -10,12 +10,12 @@
 
             <ul class="nav navcollaps">
                 <li><a href="#/home/dashboard">Dashboard</a></li>
-                <li><a href="#/searchColleges">Search Colleges</a></li>
+                <li ng-show="user.type==='student'"><a href="#/searchColleges">Search Colleges</a></li>
                 <li><a href="#/manageProfile">Manage Your Profile</a></li>
-                <li><a href="#/manageCourses">Manage Courses</a></li>
-                <li><a href="#/manageDocuments">Manage Documents</a></li>
+                <li ng-show="user.type==='college'"><a href="#/manageCourses">Manage Courses</a></li>
+                <li ng-show="user.type==='student'"><a href="#/manageDocuments">Manage Documents</a></li>
                 <li><a href="#/viewApplications">View Applications</a></li>
-                <li><a  ng-click="logout();">Logout</a></li>
+                <li><a  ng-click="logout();">Logout {{user.name}}</a></li>
                
             </ul>
 

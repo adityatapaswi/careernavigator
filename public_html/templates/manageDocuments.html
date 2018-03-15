@@ -1,28 +1,13 @@
 <ng-include src="'templates/menu.html'"></ng-include>
-<div class="container" ng-controller="ManageCoursesController">
+<div class="container" ng-controller="DocsController" ng-init="getDocuments();">
     <h1 class="well">Existing Documents</h1>
     <div class="panel box-shadow col-lg-12 well">
 
 
-        <div class="gallery" >
+        <div class="gallery" ng-repeat="doc in docs" ng-click="viewDocument(doc)">
             <img class="img-thumb" src="https://image.flaticon.com/icons/svg/337/337946.svg">
             <div class="desc">
-                SSC Certificate
-            </div>
-        </div>
-
-        <div class="gallery" >
-            <img class="img-thumb" src="https://image.flaticon.com/icons/svg/337/337946.svg">
-            <div class="desc">
-                HSC/ Diploma Certificate
-            </div>
-
-        </div>
-
-        <div class="gallery" >
-            <img class="img-thumb" src="https://image.flaticon.com/icons/svg/337/337946.svg">
-            <div class="desc">
-                College Leaving Certificate
+                {{doc.document_name}}
             </div>
         </div>
     </div>
@@ -42,14 +27,17 @@
 
                         <label class="input-group-btn select-button">
                             <label class="btn btn-primary ">
-                                Browse <input type="file" accept="application/pdf" style="display: none;">
+                                Browse <input type="file" accept="application/pdf" file-model="sscfile"   style="display: none;">
                             </label>
                         </label>
-                        <input type="text" class="form-control" readonly>
+                        <input type="text"  class="form-control" readonly>
                     </div>
                     <!--                        <span class="help-block">
                                                 Try selecting one or more files and watch the feedback
                                             </span>-->
+                </div>
+                <div class="col-md-6">
+                    <button ng-show="sscfile" class="btn btn-primary" ng-click="upload('SSC Certificate', sscfile);"><i class="fa fa-lg fa-upload"></i> Upload</button>
                 </div>
             </div>
             <div>
@@ -62,14 +50,15 @@
 
                         <label class="input-group-btn select-button">
                             <label class="btn btn-primary ">
-                                Browse <input type="file" accept="application/pdf" style="display: none;">
+                                Browse <input type="file" accept="application/pdf" file-model="hscFile" style="display: none;">
                             </label>
                         </label>
                         <input type="text" class="form-control" readonly>
                     </div>
-                    <!--                        <span class="help-block">
-                                                Try selecting one or more files and watch the feedback
-                                            </span>-->
+
+                </div>
+                <div class="col-md-6">
+                    <button ng-show="hscFile" class="btn btn-primary" ng-click="upload('HSC/ Diploma Certificate', hscFile);"><i class="fa fa-lg fa-upload"></i> Upload</button>
                 </div>
             </div>
             <div>
@@ -82,20 +71,43 @@
 
                         <label class="input-group-btn select-button">
                             <label class="btn btn-primary ">
-                                Browse <input type="file" accept="application/pdf" style="display: none;">
+                                Browse <input type="file" accept="application/pdf" file-model="clFile" style="display: none;">
                             </label>
                         </label>
                         <input type="text" class="form-control" readonly>
                     </div>
-                    <!--                        <span class="help-block">
-                                                Try selecting one or more files and watch the feedback
-                                            </span>-->
+
+                </div>
+                <div class="col-md-6">
+                    <button ng-show="clFile" class="btn btn-primary" ng-click="upload('College Leaving Certificate', clFile);"><i class="fa fa-lg fa-upload"></i> Upload</button>
                 </div>
             </div>
-            <br>
-            <div class="text-center">
-                <input type="submit" class="btn btn-primary" value="Upload Files" />
+
+            <div>
+                <strong>Select Custom File</strong>
             </div>
+            <div class="row">
+                <div class="col-lg-6 col-sm-6 col-12">
+
+                    <div class="input-group">
+
+                        <label class="input-group-btn select-button">
+                            <label class="btn btn-primary ">
+                                Browse <input type="file" accept="application/pdf" file-model="cusFile" style="display: none;">
+                            </label>
+                        </label>
+                        <input type="text" class="form-control" readonly>
+                    </div>
+
+                </div>
+                <div class="col-md-3">
+                    <input type="text" ng-show="cusFile"  ng-model="cusFileName" class="form-control" placeholder="File Name">
+                </div>
+                <div class="col-md-3">
+                    <button ng-show="cusFile" class="btn btn-primary" ng-click="upload(cusFileName, cusFile);"><i class="fa fa-lg fa-upload"></i> Upload</button>
+                </div>
+            </div>
+
         </form>
     </div>
 </div>

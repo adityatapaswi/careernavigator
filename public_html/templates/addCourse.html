@@ -1,0 +1,63 @@
+<ng-include src="'templates/menu.html'"></ng-include>
+<div class="container" ng-controller="ManageCoursesController" ng-init="getSMS()">
+    <div class="col-lg-12 well" style="position: static">
+        <h1 >Add New Course</h1>
+
+        <form ng-submit="createStream();"> 
+            <div>
+                <strong>Select Course</strong>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <select class="form-control" ng-model="stream.stream">
+                        <option disabled="" selected>Select Stream</option>
+                        <option ng-repeat="stream in streams" value="{{stream}}">{{stream}}</option>
+                    </select>     
+                </div>
+                <div class="col-md-4">                
+                    <select class="form-control" ng-model="stream.major">
+                        <option disabled="" selected>Select Major</option>
+                        <option ng-repeat="major in majors" value="{{major}}">{{major}}</option>
+                    </select>     
+                </div>
+                <div class="col-md-4">
+                    <select class="form-control" ng-model="stream.specialization">
+                        <option disabled="" selected>Select Specialization</option>
+                        <option ng-repeat="spec in specs" value="{{spec}}">{{spec}}</option>
+                    </select>     
+                </div>
+
+            </div>
+            <div class="form-group">
+                <strong>Total Intake</strong>
+                <input type="number" placeholder="Enter Total Seats For New Stream" class="form-control" ng-model="stream.ti" ng-change="allocateSeats()">
+            </div>	
+            <table>
+        <caption>Caste Wise Allocation</caption>
+        <thead>
+            <tr>
+                <th scope="col">Caste</th>
+                <th scope="col">Seats Allocated</th>
+                <th scope="col">Cut Off in %</th>
+                <th scope="col">Fees</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="caste in castes">
+                <td data-label="Caste">{{caste.name}}</td>
+                <td data-label="Seats Allocated">{{caste.als}}</td>
+                <td data-label="Cut Off in %">
+                    <div class="row">
+                    <input type="number" class="col-md-6 form-control" placeholder="Enter Cutoff" ng-model="caste.cut">
+                    </td>
+                <td data-label="Fees"><input type="number" class="form-control" placeholder="Enter Fees For This Caste" ng-model="caste.fees"></td>
+                
+            </tr>
+
+        </tbody>
+    </table>
+            <input type="submit" value="Create Course" />
+        </form>
+    </div>
+</div>

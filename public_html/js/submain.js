@@ -1,6 +1,7 @@
 var recomSubApp = angular.module('app.recomsys.sub', ['app.recomsys']);
 
-recomSubApp.controller('RightMenuController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('RightMenuController', function ($scope, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
     $scope.logout = function ()
     {
         $cookieStore.remove("recomApp");
@@ -9,39 +10,211 @@ recomSubApp.controller('RightMenuController', function ($scope, $location, $wind
     };
 });
 
-recomSubApp.controller('ViewApplicationsController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
- $scope.applications = [
+recomSubApp.controller('DocViewerController', function ($scope, alertify, objTransferService, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.pdf = objTransferService.getObj();
+    $scope.pdf.src = CONSTANTS.SERVICES.FILEPATH + $scope.pdf.document_url;
+    $http.get(CONSTANTS.SERVICES.FILEPATH + $scope.pdf.document_url, {
+        responseType: 'arraybuffer'
+    }).then(function (response) {
+        $scope.pdf.data = new Uint8Array(response.data);
+    });
+});
+recomSubApp.controller('DocsController', function ($scope, alertify, userService, objTransferService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+
+    $scope.viewDocument = function (doc) {
+        objTransferService.setObj(doc);
+        $window.open(CONSTANTS.SERVICES.FILEPATH + doc.document_url, '_blank');
+        
+    };
+    $scope.getDocuments = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCUMENTS, id: $scope.user.id})
+                .success(function (data) {
+                    $scope.docs = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+    };
+    $scope.upload = function (fileName, file) {
+        var form_data = new FormData();
+        var data = {upfile: file, file_name: fileName, sid: $scope.user.id};
+        for (var key in data) {
+            form_data.append(key, data[key]);
+        }
+        $.ajax({
+            url: CONSTANTS.SERVICES.UPLOADURL,
+            data: form_data,
+            processData: false,
+            contentType: false,
+            type: 'POST'}).success(function (data) {
+            if (data.reply)
+            {
+                alertify.logPosition("top center");
+                alertify.success(data.reply);
+                $scope.getDocuments();
+            }
+            else
+            {
+                alertify.logPosition("top center");
+                alertify.error(data);
+            }
+            if (!$scope.$$phase)
+                $scope.$apply();
+        })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+});
+recomSubApp.controller('ViewApplicationsController', function ($scope, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+    $scope.applications = [
         {
             appliedFor: "B.S.C",
             collegeName: "D.Y. Patil, Pimpri",
-            name:'Payal Patil',
+            name: 'Payal Patil',
             on: "30-Dec-2017",
-            status:'Rejected'
+            status: 'Rejected'
         },
         {
             appliedFor: "B.S.C",
             collegeName: "Jaihind Jr. College, Pimpri",
-            name:'Aditya Tapaswi',
+            name: 'Aditya Tapaswi',
             on: "29-Dec-2017",
-            status:'Selected'
+            status: 'Selected'
         },
         {
             appliedFor: "B.S.C",
             collegeName: "Ness Wadia, Pune",
-            name:'Priyanka Lele',
+            name: 'Priyanka Lele',
             on: "28-Dec-2017",
-            status:'Pending'
+            status: 'Pending'
         },
         {
             appliedFor: "B.S.C",
-            name:'Nivedita Agarmore',
+            name: 'Nivedita Agarmore',
             collegeName: "Fergusion, Pune",
             on: "20-Dec-2017",
-            status:'Pending'
+            status: 'Pending'
         }
     ];
 });
-recomSubApp.controller('ManageCoursesController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('SignupController', function ($scope, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.castes = [];
+
+    $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
+            .success(function (data) {
+                $scope.castes = data;
+                if (!$scope.$$phase)
+                    $scope.$apply();
+            })
+            .error(function (xhr, status, error) {
+                // error handling
+                if (error !== undefined) {
+                    alertify.logPosition("top center");
+                    alertify.error("Something Went Wrong");
+
+
+                }
+
+            });
+
+    function formatDate() {
+        var monthNames = [
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct",
+            "Nov", "Dec"
+        ];
+
+        var day = $scope.dob.getDate();
+        var monthIndex = $scope.dob.getMonth();
+        var year = $scope.dob.getFullYear();
+
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    }
+    $scope.gotohome = function () {
+        $location.path("/");
+    };
+    $scope.signup = function () {
+        $scope.user.view = CONSTANTS.VIEW.SIGNUP;
+        if ($scope.user.type === 'student')
+            $scope.user.dob = formatDate();
+
+        $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
+                .success(function (data) {
+                    if (data.toString().includes('already'))
+                    {
+                        alertify.logPosition("top center");
+                        alertify.error(data);
+
+                    } else
+                    {
+                        alertify.logPosition("top center");
+                        alertify.success(data);
+                        $scope.gotohome();
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+                    }
+
+
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+    };
+});
+recomSubApp.controller('ManageCoursesController', function ($scope, userService, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+
+    $scope.streams = [];
+    $scope.majors = [];
+    $scope.specs = [];
+    $scope.castes = [];
+
+    $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
+            .success(function (data) {
+                $scope.castes = data;
+                if (!$scope.$$phase)
+                    $scope.$apply();
+            })
+            .error(function (xhr, status, error) {
+                // error handling
+                if (error !== undefined) {
+                    alertify.logPosition("top center");
+                    alertify.error("Something Went Wrong");
+
+
+                }
+
+            });
+
     $scope.courses = [
         {
             name: "B.S.C",
@@ -99,23 +272,250 @@ recomSubApp.controller('ManageCoursesController', function ($scope, $location, $
 
         }
     ];
+    $scope.gotoAdd = function () {
+        $location.path("/addStream");
+    };
+
+    $scope.createStream = function () {
+        $scope.stream.res = $scope.castes;
+        $scope.stream.cid = $scope.user.id;
+
+        for (var i = 0; i < $scope.sms.length; i++)
+        {
+            var sd = $scope.sms[i];
+            if (sd.stream_name === $scope.stream.stream && sd.specialization === $scope.stream.specialization)
+                $scope.stream.sid = sd.id;
+
+        }
+        $scope.stream.view = CONSTANTS.VIEW.ADDSTREAM;
+        $.post(CONSTANTS.SERVICES.APIURL, $scope.stream)
+                .success(function (data) {
+                    alertify.logPosition("top center");
+                    alertify.success(data.reply);
+                    $location.path('/manageCourses');
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+
+    };
+    $scope.allocateSeats = function () {
+        for (var i = 0; i < $scope.castes.length; i++)
+        {
+            $scope.castes[i].als = ($scope.castes[i].allocation_per / 100) * $scope.stream.ti;
+        }
+
+    };
+    $scope.sms = [];
+    $scope.getSMS = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS})
+                .success(function (data) {
+                    $scope.sms = data;
+                    for (var i = 0; i < $scope.sms.length; i++)
+                    {
+                        if ($scope.streams.indexOf($scope.sms[i].stream_name) === -1)
+                            $scope.streams.push($scope.sms[i].stream_name);
+                        if ($scope.majors.indexOf($scope.sms[i].major) === -1)
+                            $scope.majors.push($scope.sms[i].major);
+                        if ($scope.specs.indexOf($scope.sms[i].specialization) === -1)
+                            $scope.specs.push($scope.sms[i].specialization);
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+
+                    }
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+    };
 });
-recomSubApp.controller('ManageProfileController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
-    $scope.user = {name: "Aditya",
-        email: "aditya@gmail.com",
-        city: "Pune",
-        state: "Maharashtra",
-        zip: 411033,
-        phone: "9021280829",
-        website: "www.adityainstitute.com"};
-    $scope.user.userType = 'institute';
+recomSubApp.controller('ManageProfileController', function ($scope, alertify, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
 //    $scope.user.userType='student';
+    $scope.majors = [];
+    $scope.sms = [];
+    if ($scope.user.type === 'student')
+    {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
+                .success(function (data) {
+                    $scope.castes = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS})
+                .success(function (data) {
+                    $scope.sms = data;
+                    for (var i = 0; i < $scope.sms.length; i++)
+                    {
+                        if ($scope.majors.indexOf($scope.sms[i].major) === -1)
+                            $scope.majors.push($scope.sms[i].major);
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+
+                    }
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+
+
+    }
+    $scope.updateStudent = function () {
+        $scope.user.dob = formatDate();
+        $scope.user.view = CONSTANTS.VIEW.UPDATESTUDENT;
+        $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
+                .success(function (data) {
+                    //This sets cookies for application
+                    $cookieStore.put("recomApp", data);
+
+                    //This adds user object in userService
+//                userService.addUser($user);
+
+                    $scope.$emit('showUserName', {
+                        show: true
+                    });
+                    //set cookie expiry (works when page is refreshed by user)
+                    var now = new $window.Date(), //get the current date
+                            // this will set the expiration to 1 hour
+                            exp = new $window.Date(now.getDate() + 1);
+
+                    $cookieStore.put("recomApp", data, {
+                        expires: exp
+                    });
+
+                    $location.path("/home/dashboard");
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+    $scope.updateCollege = function () {
+        $scope.user.view = CONSTANTS.VIEW.UPDATECOLLEGE;
+        $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
+                .success(function (data) {
+                    //This sets cookies for application
+                    $cookieStore.put("recomApp", data);
+
+                    //This adds user object in userService
+//                userService.addUser($user);
+
+                    $scope.$emit('showUserName', {
+                        show: true
+                    });
+                    //set cookie expiry (works when page is refreshed by user)
+                    var now = new $window.Date(), //get the current date
+                            // this will set the expiration to 1 hour
+                            exp = new $window.Date(now.getDate() + 1);
+
+                    $cookieStore.put("recomApp", data, {
+                        expires: exp
+                    });
+
+                    $location.path("/home/dashboard");
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+    function formatDate() {
+        var monthNames = [
+            "Jan", "Feb", "Mar",
+            "Apr", "May", "Jun", "Jul",
+            "Aug", "Sep", "Oct",
+            "Nov", "Dec"
+        ];
+
+        var day = $scope.user.dob.getDate();
+        var monthIndex = $scope.user.dob.getMonth();
+        var year = $scope.user.dob.getFullYear();
+
+        return day + ' ' + monthNames[monthIndex] + ' ' + year;
+    }
+    function parseDate(dateStr) {
+//        console.log(dateStr);
+        var date = new Date(dateStr);
+        return date;
+    }
+    if ($scope.user.type === 'student')
+        $scope.user.dob = parseDate($scope.user.dob);
+    $scope.quals = ["H.S.C.", "Diploma"];
+//console.log($scope.user.dob);
     $scope.changePassword = function () {
         $location.path("/changePassword");
     };
 });
-recomSubApp.controller('DashboardController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
-    $scope.profileCompletionCount = [70, 30];
+recomSubApp.controller('DashboardController', function ($scope, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+    var keys = Object.keys($scope.user);
+    var len = keys.length;
+    var comp = 0, incom = 0;
+    console.log("keys " + len);
+    for (var i = 0; i < len; i++) {
+        if ($scope.user[keys[i]] === undefined || $scope.user[keys[i]] === null || $scope.user[keys[i]] === '')
+            incom++;
+        else
+            comp++;
+    }
+    comp = (comp / len) * 100;
+    incom = (incom / len) * 100;
+    $scope.profileCompletionCount = [comp, incom];
+
     $scope.profileCompletionKey = ["Complete", "Incomplete"];
 
     $scope.collegeMatchCount = [7, 3, 10, 20];
@@ -187,65 +587,70 @@ recomSubApp.controller('SearchCollegeController', function ($scope, $location, $
         $location.path("/applyToCollege");
     };
 });
-recomSubApp.controller('LoginController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
-
+recomSubApp.controller('LoginController', function ($scope, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.showHidePassword = 'password';
+    $scope.togglePassword = function () {
+        switch ($scope.showPassword)
+        {
+            case true:
+                $scope.showHidePassword = 'text';
+                break;
+            case false:
+                $scope.showHidePassword = 'password';
+                break;
+            default :
+                $scope.showHidePassword = 'password';
+        }
+    };
+    $scope.user = {};
     $scope.login = function () {
         //This authenticates user
-        $authdata = utilities.Base64.encode("aditya.tapaswi@midasblue.com" + ':' + "Adtya123");
-        $http.defaults.headers.common.Authorization = 'Basic ' + $authdata;
+        $scope.user.view = CONSTANTS.VIEW.LOGIN;
+        $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
+                .success(function (data) {
+                    //This sets cookies for application
+                    $cookieStore.put("recomApp", data);
 
-        //This is http request for geeting user object with API and user object as parameters
-//        $http.get(CONSTANTS.SERVICES.USERS).success(function ($user) {
-
-        //This sets cookies for application
-        $cookieStore.put("recomApp", $authdata);
-
-        //This adds user object in userService
+                    //This adds user object in userService
 //                userService.addUser($user);
 
-        $scope.$emit('showUserName', {
-            show: true
-        });
-        //set cookie expiry (works when page is refreshed by user)
-        var now = new $window.Date(), //get the current date
-                // this will set the expiration to 1 hour
-                exp = new $window.Date(now.getDate() + 1);
+                    $scope.$emit('showUserName', {
+                        show: true
+                    });
+                    //set cookie expiry (works when page is refreshed by user)
+                    var now = new $window.Date(), //get the current date
+                            // this will set the expiration to 1 hour
+                            exp = new $window.Date(now.getDate() + 1);
 
-        $cookieStore.put("recomApp", $authdata, {
-            expires: exp
-        });
+                    $cookieStore.put("recomApp", data, {
+                        expires: exp
+                    });
 
-        $location.path("/home/dashboard");
+                    $location.path("/home/dashboard");
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Credentials Not Valid");
 
-//            $scope.closeModal();
 
-//        }).error(function (error) {
-//            if (error !== undefined) {
-//                if (error.message === 'HTTP 500 Internal Server Error')
-//                {
-//                    $scope.errorMessage = 'Username or Password Invalid ';
-//                    alertify.logPosition("top center");
-//                    alertify.error($scope.errorMessage);
-//
-//                } else {
-//                    $scope.errorMessage = error.error || error.message;
-//                    alertify.logPosition("top center");
-//                    alertify.error($scope.errorMessage);
-//                }
-//            }
-////            $location.path("/login");
-//        });
+                    }
+
+                });
     };
 
 });
-recomApp.directive('loading', ['$http', function ($http)
+recomApp.directive('loading', ['$http', function ($)
     {
         return {
             restrict: 'A',
             link: function (scope, elm, attrs)
             {
                 scope.isLoading = function () {
-                    return $http.pendingRequests.length > 0;
+                    return $.pendingRequests.length > 0;
                 };
                 scope.$watch(scope.isLoading, function (v)
                 {
@@ -273,18 +678,46 @@ recomApp.service('userService', ['$cookieStore', function ($cookieStore) {
             getUser: getUser
         };
     }]);
+recomApp.service('objTransferService', function ($cookieStore) {
+    var obj = {};
+    var setObj = function (newObj) {
+        obj = newObj;
+        //$cookies.put("futuremaker", $user);
+    };
+    var getObj = function () {
+        //$user = $cookies.get("futuremaker",$user);
+        return obj;
+    };
+    return {
+        setObj: setObj,
+        getObj: getObj
+    };
+});
 recomApp.constant('CONSTANTS', (function () {
     // Define your variable
     var CONSTANTS = {};
     var SERVICES = {
-//        BASE_PATH: 'http://ec2-54-169-136-45.ap-southeast-1.compute.amazonaws.com/api/fm/v0/'
-        BASE_PATH: 'http://ec2-52-77-243-65.ap-southeast-1.compute.amazonaws.com/api/fm/v0/'
+//         APIURL: 'http://ec2-54-169-136-45.ap-southeast-1.compute.amazonaws.com/api/fm/v0/users'
+//        APIURL: 'http://career.navigator.thesolutioncircle.in/ServiceController.php'
+        APIURL: 'http://localhost/recom_api/ServiceController.php',
+        FILEPATH: 'http://localhost/recom_api',
+        UPLOADURL: 'http://localhost/recom_api/fileUpload.php'
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
                 // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
-    SERVICES.USERS = SERVICES.BASE_PATH + 'users';
+    var VIEWS = {
+        LOGIN: 'login',
+        RESERVATIONS: 'get reservations',
+        SIGNUP: 'signup',
+        ADDSTREAM: 'add college stream',
+        GETSMS: 'get SMS',
+        UPDATESTUDENT: 'update student',
+        UPDATECOLLEGE: 'update college',
+        GETDOCUMENTS: 'get documents'
+    };
 
     CONSTANTS.SERVICES = SERVICES;
+    CONSTANTS.VIEW = VIEWS;
     // Use the variable in your constants
     return CONSTANTS;
 })());
