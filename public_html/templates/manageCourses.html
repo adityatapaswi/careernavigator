@@ -1,5 +1,5 @@
 <ng-include src="'templates/menu.html'"></ng-include>
-<div class="container" ng-controller="ManageCoursesController">
+<div class="container" ng-controller="ManageCoursesController" ng-init="getStreams();">
     <div class="right">
        
             <button class="btn btn-default blue-circle-button" title="Add Course"  ng-click="gotoAdd();"><i class="fa fa-lg fa-plus"></i></button>
@@ -12,20 +12,20 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Total Seats</th>
-                <th scope="col">Gen. Seats/Fees</th>
-                <th scope="col">O.B.C. Seats/Fees</th>
-                <th scope="col">S.C./N.T. Seats/Fees</th>
+                <th scope="col">Reservations</th>
+                <th scope="col">Allocated Seats</th>
+                <th scope="col">Fees</th>
                 <th scope="col">Action</th>
 
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat="course in courses">
-                <td data-label="Name">{{course.name}}</td>
-                <td data-label="Total Seats">{{course.totalSeats}}</td>
-                <td data-label="Gen. Seats/Fees">{{course.gen}} Seats - {{course.genFees}}&#8377; / Year</td>
-                <td data-label="O.B.C. Seats/Fees">{{course.obc}} Seats - {{course.obcFees}}&#8377; / Year</td>
-                <td data-label="S.C./N.T. Seats/Fees">{{course.scnt}} Seats - {{course.scntFees}}&#8377; / Year</td>
+                <td data-label="Name">{{course.stream_name}} ({{course.specialization}})</td>
+                <td data-label="Total Seats">{{course.total_intake}}</td>
+                <td data-label="Reservations">{{course.reservations}}</td>
+                <td data-label="Allocated Seats">{{course.allocated_seats}}</td>
+                <td data-label="Fees">{{course.fees}}  / Year</td>
                 <!--<td data-label="Seats Available"><span class="green" ng-class="{red: college.seatsAvailable <= 10}">{{college.seatsAvailable}}</span></td>-->
                 <!--<td data-label="Type"><span class="green" ng-class="{red: transaction.type === 'DB'}">{{transaction.type}}</span></td>-->
                 <td data-label="">

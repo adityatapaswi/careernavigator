@@ -1100,6 +1100,16 @@ table th {
         margin-right: auto;
     }
 }
+.center
+{
+    text-align: center;
+}
+.left{
+    text-align: left;
+}
+.right{
+    text-align: right; 
+}
 @media only screen and (min-width: 480px) {
 
     /* ====================

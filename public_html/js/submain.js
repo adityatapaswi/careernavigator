@@ -25,25 +25,27 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
     $scope.viewDocument = function (doc) {
         objTransferService.setObj(doc);
         $window.open(CONSTANTS.SERVICES.FILEPATH + doc.document_url, '_blank');
-        
+
     };
     $scope.getDocuments = function () {
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCUMENTS, id: $scope.user.id})
-                .success(function (data) {
-                    $scope.docs = data;
-                    if (!$scope.$$phase)
-                        $scope.$apply();
-                })
-                .error(function (xhr, status, error) {
-                    // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
+        if ($scope.user.type === 'student') {
+            $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCUMENTS, id: $scope.user.id})
+                    .success(function (data) {
+                        $scope.docs = data;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+                    })
+                    .error(function (xhr, status, error) {
+                        // error handling
+                        if (error !== undefined) {
+                            alertify.logPosition("top center");
+                            alertify.error("Something Went Wrong");
 
 
-                    }
+                        }
 
-                });
+                    });
+        }
 
     };
     $scope.upload = function (fileName, file) {
@@ -197,81 +199,46 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
     $scope.majors = [];
     $scope.specs = [];
     $scope.castes = [];
+    $scope.getCastes = function () {
 
-    $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
-            .success(function (data) {
-                $scope.castes = data;
-                if (!$scope.$$phase)
-                    $scope.$apply();
-            })
-            .error(function (xhr, status, error) {
-                // error handling
-                if (error !== undefined) {
-                    alertify.logPosition("top center");
-                    alertify.error("Something Went Wrong");
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
+                .success(function (data) {
+                    $scope.castes = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
 
 
-                }
+                    }
 
-            });
+                });
+    };
+    $scope.courses = [    ];
+    $scope.getStreams= function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETCOLSTREAMS, id:$scope.user.id})
+                .success(function (data) {
+                    $scope.courses = data;
+            if (!$scope.$$phase)
+                        $scope.$apply();
+                    
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
 
-    $scope.courses = [
-        {
-            name: "B.S.C",
-            totalSeats: "100",
-            gen: 51,
-            genFees: 15000,
-            scnt: 22,
-            scntFees: 2000,
-            obc: 27,
-            obcFees: 7500
 
-        },
-        {
-            name: "B.A.M.S",
-            totalSeats: "100",
-            gen: 51,
-            genFees: 15000,
-            scnt: 22,
-            scntFees: 2000,
-            obc: 27,
-            obcFees: 7500
+                    }
 
-        },
-        {
-            name: "M.B.B.S",
-            totalSeats: "100",
-            gen: 51,
-            genFees: 15000,
-            scnt: 22,
-            scntFees: 2000,
-            obc: 27,
-            obcFees: 7500
-
-        },
-        {
-            name: "B.D.S",
-            totalSeats: "100",
-            gen: 51,
-            genFees: 15000,
-            scnt: 22,
-            scntFees: 2000,
-            obc: 27,
-            obcFees: 7500
-
-        },
-        {
-            name: "B.C.A",
-            totalSeats: "100",
-            gen: 51,
-            genFees: 15000,
-            scnt: 22,
-            scntFees: 2000,
-            obc: 27,
-            obcFees: 7500
-
-        }
-    ];
+                });
+        
+    };
     $scope.gotoAdd = function () {
         $location.path("/addStream");
     };
@@ -345,6 +312,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     }
 
                 });
+                $scope.getCastes();
 
     };
 });
@@ -713,7 +681,8 @@ recomApp.constant('CONSTANTS', (function () {
         GETSMS: 'get SMS',
         UPDATESTUDENT: 'update student',
         UPDATECOLLEGE: 'update college',
-        GETDOCUMENTS: 'get documents'
+        GETDOCUMENTS: 'get documents',
+        GETCOLSTREAMS: 'get college streams'
     };
 
     CONSTANTS.SERVICES = SERVICES;
