@@ -1,51 +1,60 @@
 <div class="container" ng-controller="SearchCollegeController">
     <br>
+    <h2 class="center">Your Application</h2>
     <div class="card-timeline radius shadowDepth1">
-<!--        <div class="card__image border-tlr-radius">
-            <img src="https://blogs.vmware.com/networkvirtualization/files/2017/01/News-Image.jpg" alt="{{event.eventType}}" class="border-tlr-radius">
-        </div>-->
-
         <div class="card__content card__padding">
-            
+
             <div class="card__meta">
-                
-                                <img src="https://smilestream.com/Content/userimages/default-avatar.png" height="50" width="50" alt="user">
-                                <h2>Aditya Tapaswi</h2>
-                <a href="">21 Jan 1994</a>
+
+                <img src="img/male.png" ng-show="user.gender === 'Male'" height="50" width="50" alt="user">
+                <img src="img/female.png" ng-show="user.gender === 'Female'" height="50" width="50" alt="user">
+                <h2>{{user.name}}</h2>
+                <a href="">{{user.dob}}</a>
             </div>
 
             <article class="card__article">
-                <h4>Profile Summary</h4>
+                <div ng-show="user.type === 'student'">
+                    <h4><strong>Profile Summary</strong></h4>
 
-                <p>A Bright Science Student Wants to pursue career in Bachelors Of Science</p>
+                    <hr>
+                    <h4><strong>Educational Details</strong></h4>
+                    <hr>
+                    <p>Highest Education: {{user.max_qualification}}</p>
+                    <p>Major: {{user.major}}</p>
+                    <p>Percentage: {{user.percentage}}</p>
+                    <hr> 
+                </div>
+                <h4><strong>Contact Details</strong></h4>
                 <hr>
-                <h4>Educational Details</h4>
-                <p>Completed HSC in Jaihind Junior College, Pimpri And Secured 70.22% in 2011<br>
-                Completed HSC in Judson High School, Pimpri And Secured 83.22% in 2009</p>
+                <p>City: {{user.city}}</p>
+                <p>State: {{user.state}}</p>
+                <p>Zip: {{user.zip}}</p>
+                <p ng-show="user.contact_person">Contact Person: {{user.contact_person}}</p>
+                <p>Contact: {{user.contact}}</p>
+                <p ng-show="user.website">Web Site: <a target="_blank" href="{{'http://'+user.website}}">{{user.website}}</a></p>
+
+
             </article>
             <hr>
-            <h4>Application Documents & Details</h4>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="col-md-4"><div class="thumbnail"> <img src="https://image.flaticon.com/icons/svg/337/337946.svg">SSC Certificate</div></div>
-                    <div class="col-md-4"><div class="thumbnail"> <img src="https://image.flaticon.com/icons/svg/337/337946.svg">HSC/ Diploma Certificate</div></div>
-                    <div class="col-md-4"><div class="thumbnail"> <img src="https://image.flaticon.com/icons/svg/337/337946.svg">College Leaving Certificate</div></div>
-                    
+
+
+
+
+
+            <div ng-controller="DocsController" ng-init="getDocuments();">
+                <h4><strong>Your Documents</strong></h4>
+                <div class="col-lg-12 well">
+                    <div class="gallery"  ng-repeat="doc in docs" ng-click="viewDocument(doc)">
+                        <img class="img-thumb" src="./img/337946.svg">
+                        <div class="desc">{{doc.document_name}}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <div class="card__action">
-
-            <div class="card__author">
-
-                <div class="card__author-content">
-                    Adhar No: 1234 5678 9875
-                </div>
+            <div class="center">
+                <input type="submit" class="btn btn-primary" value="Send Applicatoin" ng-click="sendApplication();"/>
             </div>
-            <div class="text-center">
-                <button class="btn btn-success"><i class="fa fa-send"></i> Send Application</button>
-            </div>
+            <br>
         </div>
     </div>
 </div>

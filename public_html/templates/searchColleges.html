@@ -1,6 +1,6 @@
 <ng-include src="'templates/menu.html'"></ng-include>
 
-<div class="container" ng-controller="SearchCollegeController">
+<div class="container" ng-controller="SearchCollegeController" ng-init="getSMS();">
 
 
     <h1 class="well">Search Institute</h1>
@@ -8,114 +8,25 @@
         <div class="row">
             <form>
                 <div class="col-sm-12">
-                     <div align="right">
-                         <button type="button" class="btn btn-info" ng-click="search();"><i class="fa fa-lg fa-search"></i> Search</button>				
+                    <div align="right">
+                        <button type="button" class="btn btn-info" ng-click="search();"><i class="fa fa-lg fa-search"></i> Search</button>				
                     </div>
                     <div class="form-group">
                         <strong>Select Major</strong>
-                        <div class="answerOuter pull-left">
-                            <label for="ans1" class="option opt1 pull-left">
-                                <input type="radio" name="ans1" id="ans1" value="any" ng-model="major" checked=""/>
-                                <span class="inner">Any</span>
-                            </label>
-                            <label for="ans2" class="option opt1 pull-left">
-                                <input type="radio" name="ans1" value="Science" ng-model="major" id="ans2" />
-                                <span class="inner">Science</span>
-                            </label>
-                            <label for="ans3" class="option opt1 pull-left">
-                                <input type="radio" name="ans1" value="Commerce" ng-model="major" id="ans3" />
-                                <span class="inner">Commerce</span>
-                            </label>
-                            <label for="ans4" class="option opt1 pull-left">
-                                <input type="radio" name="ans1" value="Arts" ng-model="major" id="ans4" />
-                                <span class="inner">Arts</span>
-                            </label>
+                        <div class="row">
+                            <div class="col-md-3" ng-repeat="major in majors">
+                                <input type="checkbox" value="{{major.name}}" ng-model="major.selected"/> {{major.name}}
+                            </div>
                         </div>
                     </div>
+                    <strong>Or</strong>
                     <div class="form-group" >
                         <strong>Select Stream</strong>
-                        <div class="answerOuter pull-left " ng-show="major === 'Science'">
-                            <label for="ans11" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans11" checked=""/>
-                                <span class="inner">Any</span>
-                            </label>
-                            <label for="ans12" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans12" />
-                                <span class="inner">B.S.C</span>
-                            </label>
-                            <label for="ans13" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans13" />
-                                <span class="inner">M.B.B.S</span>
-                            </label>
-                            <label for="ans14" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans14" />
-                                <span class="inner">B.A.M.S.</span>
-                            </label>
-                            <label for="ans15" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans15" />
-                                <span class="inner">B.D.S.</span>
-                            </label>
-                            <label for="ans16" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans16" />
-                                <span class="inner">B.H.M.S.</span>
-                            </label>
-                            <label for="ans17" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans17" />
-                                <span class="inner">B.C.A.</span>
-                            </label>
-                            <label for="ans18" class="option opt1 pull-left">
-                                <input type="radio" name="ans2" id="ans18" />
-                                <span class="inner">B. Arch.</span>
-                            </label>
-                        </div>
-                        <div class="answerOuter pull-left" ng-show="major === 'Commerce'">
-                            <label for="ans19" class="option opt1 pull-left">
-                                <input type="radio" name="ans3" id="ans19" checked=""/>
-                                <span class="inner">Any</span>
-                            </label>
-                            <label for="ans20" class="option opt1 pull-left">
-                                <input type="radio" name="ans3" id="ans20" />
-                                <span class="inner">C.A.</span>
-                            </label>
-                            <label for="ans21" class="option opt1 pull-left">
-                                <input type="radio" name="ans3" id="ans21" />
-                                <span class="inner">Company Secretary</span>
-                            </label>
-                            <label for="ans22" class="option opt1 pull-left">
-                                <input type="radio" name="ans3" id="ans22" />
-                                <span class="inner">C.M.A.</span>
-                            </label>
-                            <label for="ans23" class="option opt1 pull-left">
-                                <input type="radio" name="ans3" id="ans23" />
-                                <span class="inner">B.COM.</span>
-                            </label>
-                            <label for="ans24" class="option opt1 pull-left">
-                                <input type="radio" name="ans3" id="ans24" />
-                                <span class="inner">B.B.A.</span>
-                            </label>
-                        </div>
-                        <div class="answerOuter pull-left" ng-show="major === 'Arts'">
-                            <label for="ans25" class="option opt1 pull-left">
-                                <input type="radio" name="ans4" id="ans25" checked=""/>
-                                <span class="inner">Any</span>
-                            </label>
-                            <label for="ans26" class="option opt1 pull-left">
-                                <input type="radio" name="ans4" id="ans26" />
-                                <span class="inner">B.Arch.</span>
-                            </label>
-                            <label for="ans27" class="option opt1 pull-left">
-                                <input type="radio" name="ans4" id="ans27" />
-                                <span class="inner">B.A.</span>
-                            </label>
-                            <label for="ans28" class="option opt1 pull-left">
-                                <input type="radio" name="ans4" id="ans28" />
-                                <span class="inner">B.B.A.</span>
-                            </label>
-                            <label for="ans29" class="option opt1 pull-left">
-                                <input type="radio" name="ans4" id="ans29" />
-                                <span class="inner">B.S.W.</span>
-                            </label>
 
+                        <div class="row">
+                            <div class="col-md-3" ng-repeat="stream in streams">
+                                <input type="checkbox" value="{{stream.name}}" ng-model="stream.selected"/> {{stream.name}}
+                            </div>
                         </div>
                     </div>
                     <div class="form-group">
@@ -129,65 +40,55 @@
                     <div class="row">
                         <div class="col-sm-6 form-group">
                             <h5>From</h5>
-                            <fieldset class="rating">
-                                <input type="radio" id="star5" name="fromRating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                                <input type="radio" id="star4half" name="fromRating" value="4 and a half" /><label class="half" for="star4half" title="Pretty good - 4.5 stars"></label>
-                                <input type="radio" id="star4" name="fromRating" value="4" /><label class = "full" for="star4" title="Pretty good - 4 stars"></label>
-                                <input type="radio" id="star3half" name="fromRating" value="3 and a half" /><label class="half" for="star3half" title="Meh - 3.5 stars"></label>
-                                <input type="radio" id="star3" name="fromRating" value="3" /><label class = "full" for="star3" title="Meh - 3 stars"></label>
-                                <input type="radio" id="star2half" name="fromRating" value="2 and a half" /><label class="half" for="star2half" title="Kinda bad - 2.5 stars"></label>
-                                <input type="radio" id="star2" name="fromRating" value="2" /><label class = "full" for="star2" title="Kinda bad - 2 stars"></label>
-                                <input type="radio" id="star1half" name="fromRating" value="1 and a half" /><label class="half" for="star1half" title="Meh - 1.5 stars"></label>
-                                <input type="radio" id="star1" name="fromRating" value="1" /><label class = "full" for="star1" title="Sucks big time - 1 star"></label>
-                                <input type="radio" id="starhalf" name="fromRating" value="half" /><label class="half" for="starhalf" title="Sucks big time - 0.5 stars"></label>
-                            </fieldset>
+                            <select ng-model="fromRating">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
                         </div>
 
                         <div class="col-sm-6 form-group">
                             <h5>To</h5>
-                            <fieldset class="rating">
-                                <input type="radio" id="starFor5" name="toRating" value="5" /><label class = "full" for="starFor5" title="Awesome - 5 stars"></label>
-                                <input type="radio" id="starFor4half" name="toRating" value="4 and a half" /><label class="half" for="starFor4half" title="Pretty good - 4.5 stars"></label>
-                                <input type="radio" id="starFor4" name="toRating" value="4" /><label class = "full" for="starFor4" title="Pretty good - 4 stars"></label>
-                                <input type="radio" id="starFor3half" name="toRating" value="3 and a half" /><label class="half" for="starFor3half" title="Meh - 3.5 stars"></label>
-                                <input type="radio" id="starFor3" name="toRating" value="3" /><label class = "full" for="starFor3" title="Meh - 3 stars"></label>
-                                <input type="radio" id="starFor2half" name="toRating" value="2 and a half" /><label class="half" for="starFor2half" title="Kinda bad - 2.5 stars"></label>
-                                <input type="radio" id="starFor2" name="toRating" value="2" /><label class = "full" for="starFor2" title="Kinda bad - 2 stars"></label>
-                                <input type="radio" id="starFor1half" name="toRating" value="1 and a half" /><label class="half" for="starFor1half" title="Meh - 1.5 stars"></label>
-                                <input type="radio" id="starFor1" name="toRating" value="1" /><label class = "full" for="starFor1" title="Sucks big time - 1 star"></label>
-                                <input type="radio" id="starForhalf" name="toRating" value="half" /><label class="half" for="starForhalf" title="Sucks big time - 0.5 stars"></label>
-                            </fieldset>
+                           <select ng-model="toRating">
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
                         </div>
                     </div>
                     <hr>
-<!--                    <div class="form-group">
-                        <strong>Contact Details</strong>
-
-                    </div>	
-                    <div class="row">
-                        <div class="col-sm-4 form-group">
-                            <strong>City</strong>
-                            <input type="text" placeholder="Enter City Name Here.." class="form-control">
-                        </div>	
-                        <div class="col-sm-4 form-group">
-                            <strong>State</strong>
-                            <input type="text" placeholder="Enter State Name Here.." class="form-control">
-                        </div>	
-                        <div class="col-sm-4 form-group">
-                            <strong>Zip</strong>
-                            <input type="number" placeholder="Enter Zip Code Here.." class="form-control">
-                        </div>		
-                    </div>
-
-                    <div class="form-group">
-                        <strong>Phone Number</strong>
-                        <input type="text" placeholder="Enter Phone Number Here.." class="form-control">
-                    </div>		
-
-                    <div class="form-group">
-                        <strong>Website</strong>
-                        <input type="text" placeholder="Enter Website Name Here.." class="form-control">
-                    </div>-->
+                    <!--                    <div class="form-group">
+                                            <strong>Contact Details</strong>
+                    
+                                        </div>	
+                                        <div class="row">
+                                            <div class="col-sm-4 form-group">
+                                                <strong>City</strong>
+                                                <input type="text" placeholder="Enter City Name Here.." class="form-control">
+                                            </div>	
+                                            <div class="col-sm-4 form-group">
+                                                <strong>State</strong>
+                                                <input type="text" placeholder="Enter State Name Here.." class="form-control">
+                                            </div>	
+                                            <div class="col-sm-4 form-group">
+                                                <strong>Zip</strong>
+                                                <input type="number" placeholder="Enter Zip Code Here.." class="form-control">
+                                            </div>		
+                                        </div>
+                    
+                                        <div class="form-group">
+                                            <strong>Phone Number</strong>
+                                            <input type="text" placeholder="Enter Phone Number Here.." class="form-control">
+                                        </div>		
+                    
+                                        <div class="form-group">
+                                            <strong>Website</strong>
+                                            <input type="text" placeholder="Enter Website Name Here.." class="form-control">
+                                        </div>-->
                     <div align="center">
                         <button type="button" class="btn btn-info" ng-click="search();"><i class="fa fa-lg fa-search"></i> Search</button>				
                     </div>			

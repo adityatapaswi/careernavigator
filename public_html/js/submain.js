@@ -218,14 +218,14 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
 
                 });
     };
-    $scope.courses = [    ];
-    $scope.getStreams= function () {
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETCOLSTREAMS, id:$scope.user.id})
+    $scope.courses = [];
+    $scope.getStreams = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETCOLSTREAMS, id: $scope.user.id})
                 .success(function (data) {
                     $scope.courses = data;
-            if (!$scope.$$phase)
+                    if (!$scope.$$phase)
                         $scope.$apply();
-                    
+
                 })
                 .error(function (xhr, status, error) {
                     // error handling
@@ -237,7 +237,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     }
 
                 });
-        
+
     };
     $scope.gotoAdd = function () {
         $location.path("/addStream");
@@ -312,7 +312,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     }
 
                 });
-                $scope.getCastes();
+        $scope.getCastes();
 
     };
 });
@@ -492,66 +492,139 @@ recomSubApp.controller('DashboardController', function ($scope, userService, $lo
     };
 
 });
-recomSubApp.controller('SearchCollegeController', function ($scope, $location, $window, $cookieStore, $http, CONSTANTS) {
-    $scope.colleges = [
-        {
-            name: "D.Y. Patil Pimpri",
-            course: "B.S.C",
-            rating: 2,
-            seatsAvailable: 34,
-            fees: "15000",
-            address: "Pune"
+recomSubApp.controller('SearchCollegeController', function ($scope, alertify,$location, userService, objTransferService, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+    $scope.majors = [];
+    $scope.majs = [];
+    $scope.streams = [];
+    $scope.strms = [];
 
-        },
-        {
-            name: "Fergussion College Pune",
-            rating: 4,
-            seatsAvailable: 4,
-            course: "B.S.C",
-            fees: "12000",
-            address: "Pune"
+    $scope.colleges = [];
+    $scope.searchCollege = function () {
+        $scope.searchCondition = objTransferService.getObj();
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.SEARCHCOLLEGE, condition: $scope.searchCondition})
+                .success(function (data) {
+                    $scope.colleges = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
 
-        }, {
-            name: "MES Abbasaheb Garware College Pune",
-            course: "B.COM.",
-            fees: "10000",
-            rating: 3.5,
-            seatsAvailable: 24,
-            address: "Pune"
 
-        },
-        {
-            name: "Sinhagad College Of Science Ambegaon",
-            course: "B.S.C",
-            rating: 3,
-            seatsAvailable: 14,
-            fees: "18000",
-            address: "Pune"
+                    }
 
-        },
-        {
-            name: "Sinhagad College Of Science Ambegaon",
-            course: "B.S.C",
-            rating: 3,
-            seatsAvailable: 14,
-            fees: "18000",
-            address: "Pune"
+                });
+    };
+    $scope.getSMS = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS})
+                .success(function (data) {
+                    $scope.sms = data;
+                    for (var i = 0; i < $scope.sms.length; i++)
+                    {
+                        if ($scope.strms.indexOf($scope.sms[i].stream_name) === -1)
+                        {
+                            $scope.streams.push({name: $scope.sms[i].stream_name});
+                            $scope.strms.push($scope.sms[i].stream_name);
+                        }
+                        if ($scope.majs.indexOf($scope.sms[i].major) === -1)
+                        {
+                            $scope.majors.push({name: $scope.sms[i].major});
+                            $scope.majs.push($scope.sms[i].major);
+                        }
+                        if (!$scope.$$phase)
+                            $scope.$apply();
 
-        },
-        {
-            name: "Modern College Of Arts And Science",
-            course: "B.A.",
-            rating: 4,
-            seatsAvailable: 40,
-            fees: "13000",
-            address: "Pune"
+                    }
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+    $scope.search = function () {
+        $scope.searchCondition = "";
+        $scope.searchCondition = $scope.searchCondition + "reservation_id=" + $scope.user.rid + " and cut_off<=" + $scope.user.percentage;
+        var majorsCondition = ""
+        for (var i = 0; i < $scope.majors.length; i++) {
+            var maj = $scope.majors[i];
+            if (maj.selected)
+            {
+                if (majorsCondition === "") {
+                    majorsCondition = majorsCondition + " and (major='" + maj.name + "'";
+                }
+                else
+                    majorsCondition = majorsCondition + " or major='" + maj.name + "'";
+            }
 
         }
-    ];
-    $scope.search = function () {
+        var streamsCondition = "";
+        for (var i = 0; i < $scope.streams.length; i++) {
+            var maj = $scope.streams[i];
+            if (maj.selected)
+            {
+                if (streamsCondition === "") {
+                    streamsCondition = streamsCondition + " and (stream_name='" + maj.name + "'";
+                }
+                else
+                    streamsCondition = streamsCondition + " or stream_name='" + maj.name + "'";
+            }
+        }
+        if (streamsCondition)
+            $scope.searchCondition += streamsCondition + ")";
+        if (majorsCondition)
+            $scope.searchCondition += majorsCondition + ")";
+        objTransferService.setObj($scope.searchCondition);
         $location.path("/searchCollegeResults");
     };
-    $scope.apply = function () {
+    $scope.sendApplication = function () {
+        $college = objTransferService.getObj();
+        $req={
+            stud_id:$scope.user.id,
+            college_id:$college.college_id,
+            stream_id:$college.stream_id,
+            view:CONSTANTS.VIEW.APPLYTOCOLLEGE
+        };
+        $.post(CONSTANTS.SERVICES.APIURL, $req)
+                .success(function (data) {
+                    if (data.reply.includes('Succesfully'))
+                    {
+                        alertify.logPosition("top center");
+                        alertify.success(data.reply);
+
+                    } else
+                    {
+                        alertify.logPosition("top center");
+                        alertify.error(data.reply);
+                    }
+                    $location.path("/viewApplications");
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+
+
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+    $scope.apply = function ($college) {
+        objTransferService.setObj($college);
         $location.path("/applyToCollege");
     };
 });
@@ -682,7 +755,9 @@ recomApp.constant('CONSTANTS', (function () {
         UPDATESTUDENT: 'update student',
         UPDATECOLLEGE: 'update college',
         GETDOCUMENTS: 'get documents',
-        GETCOLSTREAMS: 'get college streams'
+        GETCOLSTREAMS: 'get college streams',
+        SEARCHCOLLEGE: 'search college',
+        APPLYTOCOLLEGE: 'apply to college'
     };
 
     CONSTANTS.SERVICES = SERVICES;
