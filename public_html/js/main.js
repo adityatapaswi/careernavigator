@@ -94,6 +94,10 @@ recomApp.config(['$routeProvider', '$locationProvider',
                     templateUrl: 'templates/applyToCollege.html',
                     activetab: 'Home'
                 })
+                .when('/reviewApplication', {
+                    templateUrl: 'templates/reviewApplication.html',
+                    activetab: 'Home'
+                })
                 .otherwise({
                     redirectTo: '/home'
                 });

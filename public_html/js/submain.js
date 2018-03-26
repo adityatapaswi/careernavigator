@@ -48,6 +48,27 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
         }
 
     };
+    $scope.getDocumentsOfStudent = function ($id) {
+        if ($scope.user.type === 'college') {
+            $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCUMENTS, id: $id})
+                    .success(function (data) {
+                        $scope.docs = data;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+                    })
+                    .error(function (xhr, status, error) {
+                        // error handling
+                        if (error !== undefined) {
+                            alertify.logPosition("top center");
+                            alertify.error("Something Went Wrong");
+
+
+                        }
+
+                    });
+        }
+
+    };
     $scope.upload = function (fileName, file) {
         var form_data = new FormData();
         var data = {upfile: file, file_name: fileName, sid: $scope.user.id};
@@ -86,38 +107,36 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                 });
     };
 });
-recomSubApp.controller('ViewApplicationsController', function ($scope, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('ViewApplicationsController', function ($scope, userService, objTransferService, $location, utilService, $cookieStore, $http, CONSTANTS) {
     $scope.user = userService.getUser();
-    $scope.applications = [
-        {
-            appliedFor: "B.S.C",
-            collegeName: "D.Y. Patil, Pimpri",
-            name: 'Payal Patil',
-            on: "30-Dec-2017",
-            status: 'Rejected'
-        },
-        {
-            appliedFor: "B.S.C",
-            collegeName: "Jaihind Jr. College, Pimpri",
-            name: 'Aditya Tapaswi',
-            on: "29-Dec-2017",
-            status: 'Selected'
-        },
-        {
-            appliedFor: "B.S.C",
-            collegeName: "Ness Wadia, Pune",
-            name: 'Priyanka Lele',
-            on: "28-Dec-2017",
-            status: 'Pending'
-        },
-        {
-            appliedFor: "B.S.C",
-            name: 'Nivedita Agarmore',
-            collegeName: "Fergusion, Pune",
-            on: "20-Dec-2017",
-            status: 'Pending'
-        }
-    ];
+    $scope.applications = [];
+
+    $scope.reviewApplication = function (application) {
+        objTransferService.setObj(application);
+        $location.path('/reviewApplication');
+    };
+    $scope.getApplications = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETAPPLICATIONS, id: $scope.user.id, type: $scope.user.type})
+                .success(function (data) {
+                    $scope.applications = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+    };
+    $scope.formatDate = function (dateStr) {
+        return utilService.formatDate(new Date(dateStr));
+    };
 });
 recomSubApp.controller('SignupController', function ($scope, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.castes = [];
@@ -492,7 +511,74 @@ recomSubApp.controller('DashboardController', function ($scope, userService, $lo
     };
 
 });
-recomSubApp.controller('SearchCollegeController', function ($scope, alertify,$location, userService, objTransferService, $http, CONSTANTS) {
+recomSubApp.controller('ReviewApplicationController', function ($scope, alertify, $location, userService, objTransferService, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+    $scope.application = objTransferService.getObj();
+    if (!$scope.application.id)
+        $location.path('/viewApplications');
+
+    $scope.updateStatus = function (status)
+    {
+//        alertify.confirm("Are you sure you want to "+status+" the applicant?" ,
+//                function () {
+//                    alertify.success('Ok');
+//                },
+//                function () {
+//                    alertify.error('Cancel');
+//                });
+        if (status === 'Reject')
+            status = 'REJECTED';
+        else
+            status = "SELECTED";
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.UPDATEAPPLCATIONSTATUS, id: $scope.application.id, status:status})
+                .success(function (data) {
+                    if (data.includes('Successfully'))
+                    {
+                        alertify.logPosition("top center");
+                        alertify.success(data);
+
+                    } else
+                    {
+                        alertify.logPosition("top center");
+                        alertify.error(data);
+                    }
+                    $location.path('/viewApplications');
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+//                
+    };
+    $scope.getStudentDetails = function ()
+    {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSTUDENTDETAILS, id: $scope.application.student_id})
+                .success(function (data) {
+                    $scope.student = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+});
+recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $location, userService, objTransferService, $http, CONSTANTS) {
     $scope.user = userService.getUser();
     $scope.majors = [];
     $scope.majs = [];
@@ -588,11 +674,11 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify,$lo
     };
     $scope.sendApplication = function () {
         $college = objTransferService.getObj();
-        $req={
-            stud_id:$scope.user.id,
-            college_id:$college.college_id,
-            stream_id:$college.stream_id,
-            view:CONSTANTS.VIEW.APPLYTOCOLLEGE
+        $req = {
+            stud_id: $scope.user.id,
+            college_id: $college.college_id,
+            stream_id: $college.stream_id,
+            view: CONSTANTS.VIEW.APPLYTOCOLLEGE
         };
         $.post(CONSTANTS.SERVICES.APIURL, $req)
                 .success(function (data) {
@@ -734,6 +820,23 @@ recomApp.service('objTransferService', function ($cookieStore) {
         getObj: getObj
     };
 });
+recomApp.service('utilService', ['$filter', function ($filter) {
+        var formatDate = function (date) {
+            return  $filter('date')(date, "dd MMM yyyy");
+        };
+        var formatDate_Date = function (date) {
+            return  $filter('date')(date, "yyyy-MM-dd");
+        };
+        var formatTime = function (date) {
+            return  $filter('date')(date, "hh:mm a");
+        };
+
+        return {
+            formatDate_Date: formatDate_Date,
+            formatDate: formatDate,
+            formatTime: formatTime
+        };
+    }]);
 recomApp.constant('CONSTANTS', (function () {
     // Define your variable
     var CONSTANTS = {};
@@ -757,7 +860,10 @@ recomApp.constant('CONSTANTS', (function () {
         GETDOCUMENTS: 'get documents',
         GETCOLSTREAMS: 'get college streams',
         SEARCHCOLLEGE: 'search college',
-        APPLYTOCOLLEGE: 'apply to college'
+        APPLYTOCOLLEGE: 'apply to college',
+        GETAPPLICATIONS: 'get applications',
+        UPDATEAPPLCATIONSTATUS: 'update application status',
+        GETSTUDENTDETAILS: 'get student details'
     };
 
     CONSTANTS.SERVICES = SERVICES;
