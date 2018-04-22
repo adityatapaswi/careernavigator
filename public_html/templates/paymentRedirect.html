@@ -1,0 +1,21 @@
+<div class="container" ng-controller="RedirectController">
+    <br>
+    <h2 class="center">Your Payment Status</h2>
+    <div class="card-timeline radius shadowDepth1">
+        <div class="card__content card__padding">
+
+            <div class="card__meta">
+
+                <img src="img/male.png" ng-show="user.gender === 'Male'" height="50" width="50" alt="user">
+                <img src="img/female.png" ng-show="user.gender === 'Female'" height="50" width="50" alt="user">
+                <h2>Payment Successful</h2>
+            </div>
+
+            <article class="card__article">
+                <p>Congratulations on getting admission</p>
+                <p>You will receive an email receipt of the payment</p>
+            </article>
+            
+        </div>
+    </div>
+</div>

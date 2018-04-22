@@ -102,6 +102,12 @@ body {
 {
     color: green;
 }
+.admitted
+{
+    background-color:  green;
+    padding: 5px;
+    color: white;
+}
 .red{
     color: red;
 }

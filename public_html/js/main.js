@@ -98,6 +98,10 @@ recomApp.config(['$routeProvider', '$locationProvider',
                     templateUrl: 'templates/reviewApplication.html',
                     activetab: 'Home'
                 })
+                .when('/paymentRedirect', {
+                    templateUrl: 'templates/paymentRedirect.html',
+                    activetab: 'Home'
+                })
                 .otherwise({
                     redirectTo: '/home'
                 });

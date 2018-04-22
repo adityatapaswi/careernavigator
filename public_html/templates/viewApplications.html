@@ -18,9 +18,9 @@
                 <td data-label="College Name">{{application.college_name}}</td>
                 <td data-label="Applied On">{{formatDate(application.applied_on)}}</td>
                 <td data-label="Applied For">{{application.stream_name}} ({{application.specialization}})</td>
-                <td data-label="Status"><span  ng-class="{orange: application.status === 'PENDING',red: application.status === 'REJECTED',green: application.status === 'SELECTED'}">{{application.status}}</span></td>
+                <td data-label="Status"><span  ng-class="{orange: application.status === 'PENDING',red: application.status === 'REJECTED',green: application.status === 'SELECTED',admitted : application.status === 'ADMITTED'}">{{application.status}}</span></td>
                 <td data-label="">
-                    <button class="btn btn-info" ng-show="application.status==='SELECTED'" ng-click="apply();">Complete Payment</button>
+                    <button class="btn btn-info" ng-show="application.status==='SELECTED'" ng-click="gotoPayment(application);">Complete Payment</button>
                     <button class="btn btn-danger" title="Delete Application" ng-click="deleteApplication();" ng-hide="application.status==='SELECTED'"><i class="fa fa-lg fa-trash"></i></button>
                     <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
                 </td>

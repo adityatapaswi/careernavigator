@@ -107,10 +107,36 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                 });
     };
 });
-recomSubApp.controller('ViewApplicationsController', function ($scope, userService, objTransferService, $location, utilService, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('ViewApplicationsController', function ($scope, userService, objTransferService, $location, utilService, $cookieStore, $window, CONSTANTS) {
     $scope.user = userService.getUser();
     $scope.applications = [];
 
+    $scope.gotoPayment = function ($application) {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.MAKEPAYMENT, amount: $application.fees,
+            purpose: "Fees for " + $application.stream_name,
+            phone: $scope.user.contact,
+            name: $scope.user.name,
+            email: $scope.user.email
+        })
+                .success(function (data) {
+                    $scope.reponse = JSON.parse(data);
+                    objTransferService.setObjUsingCookie($application);
+                    $window.location.href = $scope.reponse.payment_request.longurl;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+    };
     $scope.reviewApplication = function (application) {
         objTransferService.setObj(application);
         $location.path('/reviewApplication');
@@ -530,7 +556,7 @@ recomSubApp.controller('ReviewApplicationController', function ($scope, alertify
             status = 'REJECTED';
         else
             status = "SELECTED";
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.UPDATEAPPLCATIONSTATUS, id: $scope.application.id, status:status})
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.UPDATEAPPLCATIONSTATUS, id: $scope.application.id, status: status})
                 .success(function (data) {
                     if (data.includes('Successfully'))
                     {
@@ -577,6 +603,38 @@ recomSubApp.controller('ReviewApplicationController', function ($scope, alertify
 
                 });
     };
+});
+recomSubApp.controller('RedirectController', function ($scope, alertify, $location, userService, objTransferService, $http, CONSTANTS) {
+    $scope.user = userService.getUser();
+    $scope.application = objTransferService.getObjUsingCookie();
+    if ($location.$$search.payment_id)
+    {
+        $.post(CONSTANTS.SERVICES.APIURL, {
+            view: CONSTANTS.VIEW.ADMITSTUDENT,
+            student_id: $scope.application.student_id,
+            college_id: $scope.application.college_id,
+            app_id: $scope.application.id,
+            pay_id: $location.$$search.payment_id,
+            stream_id: $scope.application.stream_id
+        })
+                .success(function (data) {
+                    if(data.includes('Successfully'))
+                    $location.path('/viewApplications');
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+
+    }
 });
 recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $location, userService, objTransferService, $http, CONSTANTS) {
     $scope.user = userService.getUser();
@@ -714,8 +772,13 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
         $location.path("/applyToCollege");
     };
 });
-recomSubApp.controller('LoginController', function ($scope, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('LoginController', function ($scope, alertify, $location, $window, $cookieStore, userService, CONSTANTS) {
     $scope.showHidePassword = 'password';
+    if (userService.getUser())
+    {
+        $location.path("/home/dashboard");
+
+    }
     $scope.togglePassword = function () {
         switch ($scope.showPassword)
         {
@@ -811,12 +874,22 @@ recomApp.service('objTransferService', function ($cookieStore) {
         obj = newObj;
         //$cookies.put("futuremaker", $user);
     };
+    var setObjUsingCookie = function (newObj) {
+        
+        $cookieStore.put("object", newObj);
+    };
     var getObj = function () {
         //$user = $cookies.get("futuremaker",$user);
         return obj;
     };
+    var getObjUsingCookie = function () {
+        //$user = $cookies.get("futuremaker",$user);
+        return $cookieStore.get("object");
+    };
     return {
         setObj: setObj,
+        setObjUsingCookie: setObjUsingCookie,
+        getObjUsingCookie: getObjUsingCookie,
         getObj: getObj
     };
 });
@@ -849,6 +922,12 @@ recomApp.constant('CONSTANTS', (function () {
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
                 // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
+    var INSTAMOJO = {
+        "Card Number": "4242 4242 4242 4242",
+        "Exp MM/YY": "01/20",
+        "CVV": "111",
+        "Second Factor Authentication code": "1221"
+    };
     var VIEWS = {
         LOGIN: 'login',
         RESERVATIONS: 'get reservations',
@@ -863,7 +942,9 @@ recomApp.constant('CONSTANTS', (function () {
         APPLYTOCOLLEGE: 'apply to college',
         GETAPPLICATIONS: 'get applications',
         UPDATEAPPLCATIONSTATUS: 'update application status',
-        GETSTUDENTDETAILS: 'get student details'
+        GETSTUDENTDETAILS: 'get student details',
+        ADMITSTUDENT: 'admit student',
+        MAKEPAYMENT: 'make payment'
     };
 
     CONSTANTS.SERVICES = SERVICES;
