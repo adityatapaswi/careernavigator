@@ -21,9 +21,9 @@
                 <td data-label="Status"><span  ng-class="{orange: application.status === 'PENDING',red: application.status === 'REJECTED',green: application.status === 'SELECTED',admitted : application.status === 'ADMITTED'}">{{application.status}}</span></td>
                 <td data-label="">
                     <button class="btn btn-info" ng-show="application.status==='SELECTED'" ng-click="gotoPayment(application);">Complete Payment</button>
+                    <button class="btn btn-success" title="Download Admit Card" ng-show="application.status==='ADMITTED'" ng-click="goToAdmitCard(application);"><i class="fa fa-lg fa-download"></i></button>
                     <button class="btn btn-danger" title="Delete Application" ng-click="deleteApplication();" ng-hide="application.status==='SELECTED'"><i class="fa fa-lg fa-trash"></i></button>
-                    <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
-                </td>
+                                    </td>
 
             </tr>
 

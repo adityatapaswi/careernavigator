@@ -1106,6 +1106,9 @@ table th {
         margin-right: auto;
     }
 }
+.bold{
+    font-weight: bold;
+}
 .center
 {
     text-align: center;
@@ -1115,6 +1118,24 @@ table th {
 }
 .right{
     text-align: right; 
+}
+.stamp{
+    height: 150px;
+    position: absolute;
+    float: right;
+    right: 105px;
+    bottom: 135px;
+}
+.letter-head{
+   color: #fff;
+background-color:  rgba(0,0,0,0.3)
+}
+.letter-head img{
+    border-radius: 0;
+}
+.letter{
+    width:80%;
+    margin: 0 auto;
 }
 @media only screen and (min-width: 480px) {
 
@@ -1408,7 +1429,7 @@ div.desc {
     border: .5em solid #003366;
     font-size: 1em;
     line-height: 1.1em;
-    
+
     color: #ffffff;
     background-color: #003366;
     margin: auto;
@@ -1419,15 +1440,15 @@ div.desc {
 }
 .blue-circle-button:hover {
     color:#ffffff;
-   border-color : #002851;
+    border-color : #002851;
     background-color: #003366;
     text-decoration: none;
-    
+
 
 }
 .blue-circle-button:visited, .blue-circle-button:focus {
     color:#ffffff;
-   border-color : #002851;
+    border-color : #002851;
     background-color: #003366;
     text-decoration: none;
     outline:none;

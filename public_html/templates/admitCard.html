@@ -1,0 +1,106 @@
+<div class="container" ng-controller="AdmitCardController" ng-init="getPaymentDetails();">
+    <br>
+
+    <div id="admitCard" class="card-timeline radius shadowDepth1">
+        <div class="card__content card__padding">
+
+            <div class="card__meta">
+                <div class="row letter letter-head">
+                    <div class="col-md-3">
+                        <img class="logo" src="img/logo.png">
+                    </div>
+                    <div class="col-md-9">
+                        <br/>
+                        <br/>
+                        <br/>
+                        <div class="right"><h4>To {{user.name}}</h4>
+                            <h5>Date: {{formatDate(today)}}</h5>
+                        </div>
+
+                    </div>
+                </div>
+                <h3 class="center">Subject: Admit Card</h3>
+            </div>
+
+            <article class="card__article letter">
+                <p>
+                    It gives us immense pleasure to give you the admit card for your successful admission.Hope you love our service. Following are the details of your admission.
+                </p>
+                <div class="">
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        Student Name
+                    </div>
+                    <div class="col-md-6">
+                        {{user.name}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        College Name
+                    </div>
+                    <div class="col-md-6">
+                        {{application.college_name}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        Course
+                    </div>
+                    <div class="col-md-6">
+                        {{application.stream_name}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        Specialization
+                    </div>
+                    <div class="col-md-6">
+                        {{application.specialization}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        Application ID
+                    </div>
+                    <div class="col-md-6">
+                        APP{{application.id}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        Payment Status
+                    </div>
+                    <div class="col-md-6">
+                        {{application.pay_id ?"Completed":"Pending"}}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 bold">
+                        Payment ID
+                    </div>
+                    <div class="col-md-6">
+                        {{application.pay_id}}
+                    </div>
+                </div>
+                </div>
+                <br/>
+                <p>Please submit a copy of this to the concerned college to confirm your admission.<br/>We wish you best for your future and endeavours.</p>
+                
+                    <img class="stamp" src="img/stamp.png">
+                
+                <div class="right">
+                    <h5>Best Regards</h5>
+                    <h5>Team Career Navigator</h5>
+                </div>
+            </article>
+
+
+            <br>
+        </div>
+    </div>
+    <div class="center">
+        <input type="submit" class="btn btn-primary" value="Download" ng-click="download();"/>
+    </div>
+    <br/>
+</div>

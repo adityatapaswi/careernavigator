@@ -70,6 +70,10 @@ recomApp.config(['$routeProvider', '$locationProvider',
                     templateUrl: 'templates/addCourse.html',
                     activetab: 'Home'
                 })
+                .when('/admitCard', {
+                    templateUrl: 'templates/admitCard.html',
+                    activetab: 'Home'
+                })
                 .when('/manageCourses', {
                     templateUrl: 'templates/manageCourses.html',
                     activetab: 'Home'

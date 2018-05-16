@@ -19,6 +19,50 @@ recomSubApp.controller('DocViewerController', function ($scope, alertify, objTra
         $scope.pdf.data = new Uint8Array(response.data);
     });
 });
+recomSubApp.controller('AdmitCardController', function ($scope, alertify, userService, objTransferService, $location, $window, $cookieStore, utilService, CONSTANTS) {
+    $scope.application = objTransferService.getObj();
+    $scope.user = userService.getUser();
+    $scope.today = new Date();
+    if (!$scope.application.id)
+        $location.path('/viewApplications');
+    $scope.getPaymentDetails = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETPAYMENTDETAILS, id: $scope.application.id})
+                .success(function (data) {
+                    if (data.purchase_token)
+                        $scope.application.pay_id = data.purchase_token;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+    $scope.download = function () {
+        html2canvas(document.getElementById('admitCard'), {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                            image: data,
+                            width: 500,
+                        }]
+                };
+                pdfMake.createPdf(docDefinition).download($scope.user.name+" admit card.pdf");
+            }
+        });
+
+    };
+    $scope.formatDate = function (dateStr) {
+        return utilService.formatDate(dateStr);
+    };
+});
 recomSubApp.controller('DocsController', function ($scope, alertify, userService, objTransferService, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.user = userService.getUser();
 
@@ -111,6 +155,10 @@ recomSubApp.controller('ViewApplicationsController', function ($scope, userServi
     $scope.user = userService.getUser();
     $scope.applications = [];
 
+    $scope.goToAdmitCard = function ($application) {
+        objTransferService.setObj($application);
+        $location.path('/admitCard');
+    };
     $scope.gotoPayment = function ($application) {
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.MAKEPAYMENT, amount: $application.fees,
             purpose: "Fees for " + $application.stream_name,
@@ -618,8 +666,8 @@ recomSubApp.controller('RedirectController', function ($scope, alertify, $locati
             stream_id: $scope.application.stream_id
         })
                 .success(function (data) {
-                    if(data.includes('Successfully'))
-                    $location.path('/viewApplications');
+                    if (data.includes('Successfully'))
+                        $location.path('/viewApplications');
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -875,7 +923,7 @@ recomApp.service('objTransferService', function ($cookieStore) {
         //$cookies.put("futuremaker", $user);
     };
     var setObjUsingCookie = function (newObj) {
-        
+
         $cookieStore.put("object", newObj);
     };
     var getObj = function () {
@@ -897,17 +945,40 @@ recomApp.service('utilService', ['$filter', function ($filter) {
         var formatDate = function (date) {
             return  $filter('date')(date, "dd MMM yyyy");
         };
+        var datediff = function (date) {
+            var d1 = new Date(date);
+            var d2 = new Date();
+            var timeDiff = d2.getTime() - d1.getTime();
+            var DaysDiff = timeDiff / (1000 * 3600 * 24);
+            if (DaysDiff < 2)
+                DaysDiff = d2.getDate() - d1.getDate();
+            return DaysDiff;
+        }
+        var datediffGreater = function (date) {
+            var d1 = new Date(date);
+            var d2 = new Date();
+            var timeDiff = d1.getTime() - d2.getTime();
+            var DaysDiff = timeDiff / (1000 * 3600 * 24);
+            if (DaysDiff < 2)
+                DaysDiff = d1.getDate() - d2.getDate();
+            return DaysDiff;
+        }
+        var formatChatDate = function (date) {
+            return  $filter('date')(date, "dd MMM");
+        };
         var formatDate_Date = function (date) {
             return  $filter('date')(date, "yyyy-MM-dd");
         };
         var formatTime = function (date) {
             return  $filter('date')(date, "hh:mm a");
         };
-
         return {
             formatDate_Date: formatDate_Date,
             formatDate: formatDate,
-            formatTime: formatTime
+            formatTime: formatTime,
+            formatChatDate: formatChatDate,
+            datediff: datediff,
+            datediffGreater: datediffGreater
         };
     }]);
 recomApp.constant('CONSTANTS', (function () {
@@ -944,7 +1015,8 @@ recomApp.constant('CONSTANTS', (function () {
         UPDATEAPPLCATIONSTATUS: 'update application status',
         GETSTUDENTDETAILS: 'get student details',
         ADMITSTUDENT: 'admit student',
-        MAKEPAYMENT: 'make payment'
+        MAKEPAYMENT: 'make payment',
+        GETPAYMENTDETAILS: 'get payment details'
     };
 
     CONSTANTS.SERVICES = SERVICES;
