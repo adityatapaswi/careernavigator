@@ -1,5 +1,5 @@
 <ng-include src="'templates/menu.html'"></ng-include>
-<div class="container" ng-controller="ManageCoursesController" ng-init="getSMS()">
+<div class="container" ng-controller="ManageCoursesController" ng-init="getSMS('major', undefined, undefined)">
     <div class="col-lg-12 well" style="position: static">
         <h1 >Add New Course</h1>
 
@@ -9,54 +9,69 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
-                    <select class="form-control" ng-model="stream.stream">
-                        <option disabled="" selected>Select Stream</option>
-                        <option ng-repeat="stream in streams" value="{{stream}}">{{stream}}</option>
-                    </select>     
+                    <div ng-dropdown-multiselect="" options="majors" selected-model="majorsFilter" events="majorsEvents" extra-settings="settings"></div>
                 </div>
-                <div class="col-md-4">                
-                    <select class="form-control" ng-model="stream.major">
-                        <option disabled="" selected>Select Major</option>
-                        <option ng-repeat="major in majors" value="{{major}}">{{major}}</option>
-                    </select>     
+                <div class="col-md-4" ng-show="streams.length">                
+                    <div ng-dropdown-multiselect="" options="streams" selected-model="streamsFilter" events="streamsEvents" extra-settings="settings"></div>   
                 </div>
-                <div class="col-md-4">
-                    <select class="form-control" ng-model="stream.specialization">
-                        <option disabled="" selected>Select Specialization</option>
-                        <option ng-repeat="spec in specs" value="{{spec}}">{{spec}}</option>
-                    </select>     
+                <div class="col-md-4" ng-show="specializations.length">
+                    <div ng-dropdown-multiselect="" options="specializations" selected-model="specFilter" events="specEvents" extra-settings="settings"></div>
                 </div>
 
+            </div>
+            <div class="row" ng-show="streamsFilter[0].label === 'Custom'">
+                <div class="col-md-4">
+                    <strong>Stream Name</strong>
+                    <input type="text" placeholder="Enter Stream Name" class="form-control" ng-model="stream.stream">
+                </div>
+                <div class="col-md-4">
+                    <strong>Specialization</strong>
+                    <input type="text" placeholder="Enter Specialization" class="form-control" ng-model="stream.specialization">
+                </div>
+                <div class="col-md-4">
+                    <strong>Duration</strong>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <input type="number" placeholder="Enter Duration Of Course" max="10" class="form-control" ng-model="stream.duration">
+                        </div>
+                        <div class="col-md-6">
+                            <select class="form-control" ng-model='yorm'>
+                                <option value="Years">Years</option>
+                                <option value="Months">Months</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="form-group">
                 <strong>Total Intake</strong>
                 <input type="number" placeholder="Enter Total Seats For New Stream" class="form-control" ng-model="stream.ti" ng-change="allocateSeats()">
             </div>	
             <table>
-        <caption>Caste Wise Allocation</caption>
-        <thead>
-            <tr>
-                <th scope="col">Caste</th>
-                <th scope="col">Seats Allocated</th>
-                <th scope="col">Cut Off in %</th>
-                <th scope="col">Fees</th>
-                
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="caste in castes">
-                <td data-label="Caste">{{caste.name}}</td>
-                <td data-label="Seats Allocated">{{caste.als}}</td>
-                <td data-label="Cut Off in %">
-                    <div class="row">
-                    <input type="number" class="col-md-6 form-control" placeholder="Enter Cutoff" ng-model="caste.cut">
-                    </td>
-                <td data-label="Fees"><input type="number" class="form-control" placeholder="Enter Fees For This Caste" ng-model="caste.fees"></td>
-                
-            </tr>
+                <caption>Caste Wise Allocation</caption>
+                <thead>
+                    <tr>
+                        <th scope="col">Caste</th>
+                        <th scope="col">Seats Allocated</th>
+                        <th scope="col">Cut Off in %</th>
+                        <th scope="col">Fees</th>
 
-        </tbody>
-    </table>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="caste in castes">
+                        <td data-label="Caste">{{caste.name}}</td>
+                        <td data-label="Seats Allocated">{{caste.als}}</td>
+                        <td data-label="Cut Off in %">
+                            <div class="row">
+                                <input type="number" class="col-md-6 form-control" placeholder="Enter Cutoff" ng-model="caste.cut">
+                                </td>
+                                <td data-label="Fees"><input type="number" class="form-control" placeholder="Enter Fees For This Caste" ng-model="caste.fees"></td>
+
+                    </tr>
+
+                </tbody>
+            </table>
             <br>    
             <div class="center">
                 <button type="submit" class="btn btn-primary" >Create Course</button>

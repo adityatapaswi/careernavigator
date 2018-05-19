@@ -54,7 +54,7 @@ recomSubApp.controller('AdmitCardController', function ($scope, alertify, userSe
                             width: 500,
                         }]
                 };
-                pdfMake.createPdf(docDefinition).download($scope.user.name+" admit card.pdf");
+                pdfMake.createPdf(docDefinition).download($scope.user.name + " admit card.pdf");
             }
         });
 
@@ -288,9 +288,61 @@ recomSubApp.controller('SignupController', function ($scope, alertify, $location
 recomSubApp.controller('ManageCoursesController', function ($scope, userService, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.user = userService.getUser();
 
-    $scope.streams = [];
+    $scope.majorsFilter = [];
     $scope.majors = [];
-    $scope.specs = [];
+    $scope.stream = {};
+    $scope.majorsEvents = {onSelectionChanged: function () {
+            $scope.major = "";
+            $scope.majorsFilter.map(function (maj, key) {
+                if (key !== $scope.majorsFilter.length - 1)
+                    $scope.major = $scope.major + maj.label + ",";
+                else
+                    $scope.major = $scope.major + maj.label;
+
+            });
+            $scope.getSMS('stream', $scope.major, undefined);
+        }};
+    $scope.specFilter = [];
+    $scope.specializations = [];
+    $scope.specEvents = {onSelectionChanged: function () {
+            $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSTREAMID, major: $scope.majorsFilter[0].label, stream: $scope.streamsFilter[0].label, spec: $scope.specFilter[0].label})
+                    .success(function (data) {
+                        $scope.stream.sid = data.id;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+                    })
+                    .error(function (xhr, status, error) {
+                        // error handling
+                        if (error !== undefined) {
+                            alertify.logPosition("top center");
+                            alertify.error("Something Went Wrong");
+
+
+                        }
+
+                    });
+        }};
+    $scope.streamsFilter = [];
+    $scope.streams = [];
+    $scope.streamsEvents = {onSelectionChanged: function () {
+            if ($scope.streamsFilter[0].label !== 'Custom') {
+                $scope.streamf = "";
+                $scope.streamsFilter.map(function (maj, key) {
+                    if (key !== $scope.streamsFilter.length - 1)
+                        $scope.streamf = $scope.streamf + maj.label + ",";
+                    else
+                        $scope.streamf = $scope.streamf + maj.label;
+
+                });
+                $scope.getSMS('spec', $scope.major, $scope.streamf);
+            }
+            else
+                $scope.stream.major=$scope.majorsFilter[0].label;
+        }};
+    $scope.settings = {selectionLimit: 1, smartButtonMaxItems: 3, smartButtonTextConverter: function (itemText) {
+            return itemText;
+        }};
+
     $scope.castes = [];
     $scope.getCastes = function () {
 
@@ -339,13 +391,9 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
     $scope.createStream = function () {
         $scope.stream.res = $scope.castes;
         $scope.stream.cid = $scope.user.id;
-
-        for (var i = 0; i < $scope.sms.length; i++)
-        {
-            var sd = $scope.sms[i];
-            if (sd.stream_name === $scope.stream.stream && sd.specialization === $scope.stream.specialization)
-                $scope.stream.sid = sd.id;
-
+        if($scope.streamsFilter[0].label==='Custom'){
+            $scope.stream.duration=$scope.stream.duration+' '+$scope.yorm;
+            $scope.stream.sid=undefined;
         }
         $scope.stream.view = CONSTANTS.VIEW.ADDSTREAM;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.stream)
@@ -377,23 +425,24 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
         }
 
     };
-    $scope.sms = [];
-    $scope.getSMS = function () {
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS})
-                .success(function (data) {
-                    $scope.sms = data;
-                    for (var i = 0; i < $scope.sms.length; i++)
-                    {
-                        if ($scope.streams.indexOf($scope.sms[i].stream_name) === -1)
-                            $scope.streams.push($scope.sms[i].stream_name);
-                        if ($scope.majors.indexOf($scope.sms[i].major) === -1)
-                            $scope.majors.push($scope.sms[i].major);
-                        if ($scope.specs.indexOf($scope.sms[i].specialization) === -1)
-                            $scope.specs.push($scope.sms[i].specialization);
-                        if (!$scope.$$phase)
-                            $scope.$apply();
 
+    $scope.getSMS = function (type, majors, streams) {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: type, majors: majors, streams: streams})
+                .success(function (data) {
+                    if (type === 'major') {
+                        $scope.majors = data;
                     }
+                    else if (type === 'stream')
+                    {
+                        $scope.streams = data;
+                        $scope.streams.push({label: 'Custom', id: 'Custom'});
+                    }
+                    else
+                        $scope.specializations = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+
+
                 })
                 .error(function (xhr, status, error) {
                     // error handling
@@ -690,8 +739,93 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
     $scope.majs = [];
     $scope.streams = [];
     $scope.strms = [];
+    $scope.statesFilter = [];
+    $scope.states = [];
+    $scope.statesEvents = {onSelectionChanged: function () {
+            $scope.getCities();
+        }};
+    $scope.majorsFilter = [];
+    $scope.majors = [];
+    $scope.majorsEvents = {onSelectionChanged: function () {
+            $scope.major = "";
+            $scope.majorsFilter.map(function (maj, key) {
+                if (key !== $scope.majorsFilter.length - 1)
+                    $scope.major = $scope.major + maj.label + ",";
+                else
+                    $scope.major = $scope.major + maj.label;
 
+            });
+            $scope.getSMS('stream', $scope.major, undefined);
+        }};
+    $scope.specFilter = [];
+    $scope.specializations = [];
+    $scope.streamsFilter = [];
+    $scope.streams = [];
+    $scope.streamsEvents = {onSelectionChanged: function () {
+            $scope.stream = "";
+            $scope.streamsFilter.map(function (maj, key) {
+                if (key !== $scope.streamsFilter.length - 1)
+                    $scope.stream = $scope.stream + maj.label + ",";
+                else
+                    $scope.stream = $scope.stream + maj.label;
+
+            });
+            $scope.getSMS('spec', $scope.major, $scope.stream);
+        }};
+    $scope.settings = {smartButtonMaxItems: 3, smartButtonTextConverter: function (itemText) {
+            return itemText;
+        }};
+    $scope.citiesFilter = [];
+    $scope.cities = [];
     $scope.colleges = [];
+    if (Object.keys(objTransferService.getObj()).length <= 0)
+    {
+        $location.path('/searchColleges');
+    }
+    $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETADMISSIONSTATUS, id: $scope.user.id})
+            .success(function (data) {
+                $scope.admitted = data;
+                if (!$scope.$$phase)
+                    $scope.$apply();
+            })
+            .error(function (xhr, status, error) {
+                // error handling
+                if (error !== undefined) {
+                    alertify.logPosition("top center");
+                    alertify.error("Something Went Wrong");
+
+
+                }
+
+            });
+
+
+    $scope.getCities = function () {
+        var filter = "";
+        $scope.statesFilter.map(function (state, key) {
+            if (key !== $scope.statesFilter.length - 1)
+                filter = filter + state.label + ",";
+            else
+                filter = filter + state.label;
+
+        });
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETCITIES, states: filter})
+                .success(function (data) {
+                    $scope.cities = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
     $scope.searchCollege = function () {
         $scope.searchCondition = objTransferService.getObj();
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.SEARCHCOLLEGE, condition: $scope.searchCondition})
@@ -711,26 +845,42 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
 
                 });
     };
-    $scope.getSMS = function () {
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS})
+    $scope.getSMS = function (type, majors, streams) {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: type, majors: majors, streams: streams})
                 .success(function (data) {
-                    $scope.sms = data;
-                    for (var i = 0; i < $scope.sms.length; i++)
+
+                    if (type === 'major') {
+                        $scope.majors = data;
+                    }
+                    else if (type === 'stream')
                     {
-                        if ($scope.strms.indexOf($scope.sms[i].stream_name) === -1)
-                        {
-                            $scope.streams.push({name: $scope.sms[i].stream_name});
-                            $scope.strms.push($scope.sms[i].stream_name);
-                        }
-                        if ($scope.majs.indexOf($scope.sms[i].major) === -1)
-                        {
-                            $scope.majors.push({name: $scope.sms[i].major});
-                            $scope.majs.push($scope.sms[i].major);
-                        }
-                        if (!$scope.$$phase)
-                            $scope.$apply();
+                        $scope.streams = data;
+                    }
+                    else
+                        $scope.specializations = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+
+
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
 
                     }
+
+                });
+
+    };
+    $scope.getStates = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSTATES})
+                .success(function (data) {
+                    $scope.states = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
                 })
                 .error(function (xhr, status, error) {
                     // error handling
@@ -746,35 +896,69 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
     $scope.search = function () {
         $scope.searchCondition = "";
         $scope.searchCondition = $scope.searchCondition + "reservation_id=" + $scope.user.rid + " and cut_off<=" + $scope.user.percentage;
-        var majorsCondition = ""
-        for (var i = 0; i < $scope.majors.length; i++) {
-            var maj = $scope.majors[i];
-            if (maj.selected)
-            {
-                if (majorsCondition === "") {
-                    majorsCondition = majorsCondition + " and (major='" + maj.name + "'";
-                }
-                else
-                    majorsCondition = majorsCondition + " or major='" + maj.name + "'";
+        var majorsCondition = "";
+        for (var i = 0; i < $scope.majorsFilter.length; i++) {
+            var maj = $scope.majorsFilter[i];
+            if (majorsCondition === "") {
+                majorsCondition = majorsCondition + " and (major='" + maj.label + "'";
             }
+            else
+                majorsCondition = majorsCondition + " or major='" + maj.label + "'";
+
 
         }
         var streamsCondition = "";
-        for (var i = 0; i < $scope.streams.length; i++) {
-            var maj = $scope.streams[i];
-            if (maj.selected)
-            {
-                if (streamsCondition === "") {
-                    streamsCondition = streamsCondition + " and (stream_name='" + maj.name + "'";
-                }
-                else
-                    streamsCondition = streamsCondition + " or stream_name='" + maj.name + "'";
+        for (var i = 0; i < $scope.streamsFilter.length; i++) {
+            var maj = $scope.streamsFilter[i];
+
+            if (streamsCondition === "") {
+                streamsCondition = streamsCondition + " and (stream_name='" + maj.label + "'";
             }
+            else
+                streamsCondition = streamsCondition + " or stream_name='" + maj.label + "'";
+
+        }
+        var specCondition = "";
+        for (var i = 0; i < $scope.specFilter.length; i++) {
+            var maj = $scope.specFilter[i];
+
+            if (specCondition === "") {
+                specCondition = specCondition + " and (specialization='" + maj.label + "'";
+            }
+            else
+                specCondition = specCondition + " or specialization='" + maj.label + "'";
+
+        }
+        var statesCondition = "";
+        for (var i = 0; i < $scope.statesFilter.length; i++) {
+            var maj = $scope.statesFilter[i];
+            if (statesCondition === "") {
+                statesCondition = statesCondition + " and (state='" + maj.label + "'";
+            }
+            else
+                statesCondition = statesCondition + " or state='" + maj.label + "'";
+
+        }
+        var citiesCondition = "";
+        for (var i = 0; i < $scope.citiesFilter.length; i++) {
+            var maj = $scope.citiesFilter[i];
+            if (citiesCondition === "") {
+                citiesCondition = citiesCondition + " and (city='" + maj.label + "'";
+            }
+            else
+                citiesCondition = citiesCondition + " or city='" + maj.label + "'";
+
         }
         if (streamsCondition)
             $scope.searchCondition += streamsCondition + ")";
         if (majorsCondition)
             $scope.searchCondition += majorsCondition + ")";
+        if (specCondition)
+            $scope.searchCondition += specCondition + ")";
+        if (statesCondition)
+            $scope.searchCondition += statesCondition + ")";
+        if (citiesCondition)
+            $scope.searchCondition += citiesCondition + ")";
         objTransferService.setObj($scope.searchCondition);
         $location.path("/searchCollegeResults");
     };
@@ -1016,6 +1200,10 @@ recomApp.constant('CONSTANTS', (function () {
         GETSTUDENTDETAILS: 'get student details',
         ADMITSTUDENT: 'admit student',
         MAKEPAYMENT: 'make payment',
+        GETADMISSIONSTATUS: 'get admission status',
+        GETCITIES: 'get cities',
+        GETSTATES: 'get states',
+        GETSTREAMID: 'get stream id',
         GETPAYMENTDETAILS: 'get payment details'
     };
 

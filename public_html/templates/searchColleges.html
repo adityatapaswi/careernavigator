@@ -1,6 +1,7 @@
 <ng-include src="'templates/menu.html'"></ng-include>
 
-<div class="container" ng-controller="SearchCollegeController" ng-init="getSMS();">
+<div class="container" ng-controller="SearchCollegeController" ng-init="getSMS('major', undefined, undefined);
+                getStates();">
 
 
     <h1 class="well">Search Institute</h1>
@@ -12,83 +13,68 @@
                         <button type="button" class="btn btn-info" ng-click="search();"><i class="fa fa-lg fa-search"></i> Search</button>				
                     </div>
                     <div class="form-group">
-                        <strong>Select Major</strong>
                         <div class="row">
-                            <div class="col-md-3" ng-repeat="major in majors">
-                                <input type="checkbox" value="{{major.name}}" ng-model="major.selected"/> {{major.name}}
+                            <div class="col-md-4">
+                                <strong>Select Major</strong>
+                                <div ng-dropdown-multiselect="" options="majors" selected-model="majorsFilter" events="majorsEvents" extra-settings="settings"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Select Stream</strong>
+                                <div ng-dropdown-multiselect="" options="streams" selected-model="streamsFilter" events="streamsEvents" extra-settings="settings"></div>
+                            </div>
+                            <div class="col-md-4">
+                                <strong>Select Specialization</strong>
+                                <div ng-dropdown-multiselect="" options="specializations" selected-model="specFilter" extra-settings="settings"></div>
                             </div>
                         </div>
                     </div>
-                    <strong>Or</strong>
-                    <div class="form-group" >
-                        <strong>Select Stream</strong>
 
-                        <div class="row">
-                            <div class="col-md-3" ng-repeat="stream in streams">
-                                <input type="checkbox" value="{{stream.name}}" ng-model="stream.selected"/> {{stream.name}}
-                            </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <strong>Select Rating Range</strong>
-                        <!--<input type="text" placeholder="Enter Name Of Institute Here" class="form-control">-->
-                    </div>
+                    <!--                    <div class="form-group">
+                                            <strong>Select Rating Range</strong>
+                                            <input type="text" placeholder="Enter Name Of Institute Here" class="form-control">
+                                        </div>-->
                     <!--                    <div class="form-group">
                                             <strong>Email</strong>
                                             <input type="text" placeholder="Enter Email Of Institute Here" class="form-control">
                                         </div>-->
-                    <div class="row">
-                        <div class="col-sm-6 form-group">
-                            <h5>From</h5>
-                            <select ng-model="fromRating">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-
-                        <div class="col-sm-6 form-group">
-                            <h5>To</h5>
-                           <select ng-model="toRating">
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                    </div>
-                    <hr>
-                    <!--                    <div class="form-group">
-                                            <strong>Contact Details</strong>
+                    <!--                    <div class="row">
+                                            <div class="col-sm-6 form-group">
+                                                <h5>From</h5>
+                                                <select ng-model="fromRating">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
                     
-                                        </div>	
-                                        <div class="row">
-                                            <div class="col-sm-4 form-group">
-                                                <strong>City</strong>
-                                                <input type="text" placeholder="Enter City Name Here.." class="form-control">
-                                            </div>	
-                                            <div class="col-sm-4 form-group">
-                                                <strong>State</strong>
-                                                <input type="text" placeholder="Enter State Name Here.." class="form-control">
-                                            </div>	
-                                            <div class="col-sm-4 form-group">
-                                                <strong>Zip</strong>
-                                                <input type="number" placeholder="Enter Zip Code Here.." class="form-control">
-                                            </div>		
-                                        </div>
-                    
-                                        <div class="form-group">
-                                            <strong>Phone Number</strong>
-                                            <input type="text" placeholder="Enter Phone Number Here.." class="form-control">
-                                        </div>		
-                    
-                                        <div class="form-group">
-                                            <strong>Website</strong>
-                                            <input type="text" placeholder="Enter Website Name Here.." class="form-control">
+                                            <div class="col-sm-6 form-group">
+                                                <h5>To</h5>
+                                                <select ng-model="toRating">
+                                                    <option value="1">1</option>
+                                                    <option value="2">2</option>
+                                                    <option value="3">3</option>
+                                                    <option value="4">4</option>
+                                                    <option value="5">5</option>
+                                                </select>
+                                            </div>
                                         </div>-->
+                    <hr>
+                    <div class="form-group">
+                        <strong>Location Filter</strong>
+
+                    </div>	
+                    <div class="row">
+                        <div class="col-sm-4 form-group">
+                            <strong>State</strong>
+                            <div ng-dropdown-multiselect="" options="states" selected-model="statesFilter" events="statesEvents" extra-settings="settings"></div>
+                        </div>	
+                        <div class="col-sm-4 form-group">
+                            <strong>City</strong>
+                            <div ng-dropdown-multiselect="" options="cities" selected-model="citiesFilter" extra-settings="settings"></div>
+                        </div>	
+                    </div>
                     <div align="center">
                         <button type="button" class="btn btn-info" ng-click="search();"><i class="fa fa-lg fa-search"></i> Search</button>				
                     </div>			
