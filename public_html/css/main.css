@@ -1323,6 +1323,7 @@ div.desc {
     padding: 5px;
     color: #002851;
     text-align: center;
+    cursor: pointer;
 }
 .modal {
     display: none; /* Hidden by default */
@@ -1520,4 +1521,13 @@ div.desc {
     h3 {
         page-break-after: avoid;
     }
+}
+
+.delete-btn{
+    position: absolute;
+    color: maroon;
+    z-index: 3;
+}
+.delete-btn:hover{
+    color: red;
 }

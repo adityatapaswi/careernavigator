@@ -63,13 +63,59 @@ recomSubApp.controller('AdmitCardController', function ($scope, alertify, userSe
         return utilService.formatDate(dateStr);
     };
 });
-recomSubApp.controller('DocsController', function ($scope, alertify, userService, objTransferService, $location, $window, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('DocsController', function ($scope, alertify, userService, objTransferService, $ngConfirm, $window, $cookieStore, $http, CONSTANTS) {
     $scope.user = userService.getUser();
 
     $scope.viewDocument = function (doc) {
         objTransferService.setObj(doc);
         $window.open(CONSTANTS.SERVICES.FILEPATH + doc.document_url, '_blank');
 
+    };
+    $scope.deleteDoc = function ($doc) {
+        $ngConfirm({
+            icon: 'fa fa-question',
+            closeIcon: true,
+            closeIconClass: 'fa fa-close',
+            title: 'Confirm!',
+            theme: 'supervan',
+            type: "blue",
+            content: '<strong>Are You Sure?</strong> You Want To Delete This?',
+            scope: $scope,
+            buttons: {
+                sayBoo: {
+                    text: 'Yes',
+                    btnClass: 'btn-danger',
+                    action: function (scope, button) {
+                        $doc.view = CONSTANTS.VIEW.DELETEDOCUMENT;
+                        $.post(CONSTANTS.SERVICES.APIURL, $doc)
+                                .success(function (data) {
+                                    if (data.includes('Successfully')) {
+                                        alertify.logPosition("top center");
+                                        alertify.success(data);
+                                        $scope.getDocuments();
+                                    }
+                                    if (!$scope.$$phase)
+                                        $scope.$apply();
+                                })
+                                .error(function (xhr, status, error) {
+                                    // error handling
+                                    if (error !== undefined) {
+                                        alertify.logPosition("top center");
+                                        alertify.error("Somthing Went Wrong");
+                                    }
+
+                                });
+                    }
+                },
+                somethingElse: {
+                    text: 'No',
+                    btnClass: 'btn-success',
+                    action: function (scope, button) {
+
+                    }
+                }
+            }
+        });
     };
     $scope.getDocuments = function () {
         if ($scope.user.type === 'student') {
@@ -337,7 +383,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                 $scope.getSMS('spec', $scope.major, $scope.streamf);
             }
             else
-                $scope.stream.major=$scope.majorsFilter[0].label;
+                $scope.stream.major = $scope.majorsFilter[0].label;
         }};
     $scope.settings = {selectionLimit: 1, smartButtonMaxItems: 3, smartButtonTextConverter: function (itemText) {
             return itemText;
@@ -391,9 +437,9 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
     $scope.createStream = function () {
         $scope.stream.res = $scope.castes;
         $scope.stream.cid = $scope.user.id;
-        if($scope.streamsFilter[0].label==='Custom'){
-            $scope.stream.duration=$scope.stream.duration+' '+$scope.yorm;
-            $scope.stream.sid=undefined;
+        if ($scope.streamsFilter[0].label === 'Custom') {
+            $scope.stream.duration = $scope.stream.duration + ' ' + $scope.yorm;
+            $scope.stream.sid = undefined;
         }
         $scope.stream.view = CONSTANTS.VIEW.ADDSTREAM;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.stream)
@@ -482,17 +528,13 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
 
                 });
 
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS})
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS,type:'major'})
                 .success(function (data) {
-                    $scope.sms = data;
-                    for (var i = 0; i < $scope.sms.length; i++)
-                    {
-                        if ($scope.majors.indexOf($scope.sms[i].major) === -1)
-                            $scope.majors.push($scope.sms[i].major);
+                    $scope.majors=data;
                         if (!$scope.$$phase)
                             $scope.$apply();
 
-                    }
+                    
                 })
                 .error(function (xhr, status, error) {
                     // error handling
@@ -508,6 +550,44 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
 
 
     }
+    $scope.changePass = function () {
+        if ($scope.oldpass === $scope.user.password) {
+            if ($scope.password === $scope.cpass) {
+                $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.CHANGEPASSWORD, type: $scope.user.type, email: $scope.user.email, pass: $scope.password})
+                        .success(function (data) {
+                            if (data.reply.includes('Password Update Succesfully'))
+                            {
+                                alertify.logPosition("top center");
+                                alertify.success(data + " Please Login With New Credentials");
+                                $cookieStore.remove("recomApp");
+                                $location.path("/");
+                                $window.location.reload();
+                            }
+                            if (!$scope.$$phase)
+                                $scope.$apply();
+                        })
+                        .error(function (xhr, status, error) {
+                            // error handling
+                            if (error !== undefined) {
+                                alertify.logPosition("top center");
+                                alertify.error("Something Went Wrong");
+
+
+                            }
+
+                        });
+            }
+            else {
+                alertify.logPosition("top center");
+                alertify.error("Password Should Match Confirm Password");
+            }
+        }
+        else
+        {
+            alertify.logPosition("top center");
+            alertify.error("Please Enter Correct Old Password");
+        }
+    };
     $scope.updateStudent = function () {
         $scope.user.dob = formatDate();
         $scope.user.view = CONSTANTS.VIEW.UPDATESTUDENT;
@@ -633,6 +713,33 @@ recomSubApp.controller('DashboardController', function ($scope, userService, $lo
     $scope.options = {legend: {display: true, position: 'right'}
     };
 
+    $scope.getDocCount = function ()
+    {
+        if ($scope.user.type === 'student') {
+            $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCCOUNT, id: $scope.user.id})
+                    .success(function (data) {
+                        $scope.user.doc_count = data.count;
+                        var comp = (data.count / 3) * 100;
+                        var incom = ((3 - data.count) / 3) * 100;
+                        $scope.docCompletionCount = [comp, incom];
+
+                        $scope.docCompletionKey = ["Complete", "Incomplete"];
+
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+                    })
+                    .error(function (xhr, status, error) {
+                        // error handling
+                        if (error !== undefined) {
+                            alertify.logPosition("top center");
+                            alertify.error("Something Went Wrong");
+
+
+                        }
+
+                    });
+        }
+    };
 });
 recomSubApp.controller('ReviewApplicationController', function ($scope, alertify, $location, userService, objTransferService, $http, CONSTANTS) {
     $scope.user = userService.getUser();
@@ -844,6 +951,27 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                     }
 
                 });
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCCOUNT, id: $scope.user.id})
+                .success(function (data) {
+                    $scope.user.doc_count = data.count;
+                    if (data.count !== "3")
+                    {
+                        alertify.logPosition("top center");
+                        alertify.error("You Can't Apply As You Haven't Uploaded Mandatory Documents.");
+                    }
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
     };
     $scope.getSMS = function (type, majors, streams) {
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: type, majors: majors, streams: streams})
@@ -1034,7 +1162,7 @@ recomSubApp.controller('LoginController', function ($scope, alertify, $location,
                     $cookieStore.put("recomApp", data);
 
                     //This adds user object in userService
-//                userService.addUser($user);
+                    userService.addUser(data);
 
                     $scope.$emit('showUserName', {
                         show: true
@@ -1204,6 +1332,9 @@ recomApp.constant('CONSTANTS', (function () {
         GETCITIES: 'get cities',
         GETSTATES: 'get states',
         GETSTREAMID: 'get stream id',
+        GETDOCCOUNT: 'get doc count',
+        DELETEDOCUMENT: 'delete document',
+        CHANGEPASSWORD: 'change password',
         GETPAYMENTDETAILS: 'get payment details'
     };
 

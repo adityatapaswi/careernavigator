@@ -1,4 +1,4 @@
-var recomApp = angular.module('app.recomsys', ['ngCookies','pdfjsViewer','angularjs-dropdown-multiselect','file-model', 'ngResource', 'ngRoute', "ngTable", 'ngFileSaver', 'ngMessages', 'ngSanitize', 'selectize', '720kb.datepicker', 'ui.bootstrap', 'chart.js', 'ngAlertify', 'angular-thumbnails', 'app.recomsys.sub']);
+var recomApp = angular.module('app.recomsys', ['ngCookies','pdfjsViewer','cp.ngConfirm' ,'angularjs-dropdown-multiselect','file-model', 'ngResource', 'ngRoute', "ngTable", 'ngFileSaver', 'ngMessages', 'ngSanitize', 'selectize', '720kb.datepicker', 'ui.bootstrap', 'chart.js', 'ngAlertify', 'angular-thumbnails', 'app.recomsys.sub']);
 recomApp.config(
         function ($compileProvider)
         {

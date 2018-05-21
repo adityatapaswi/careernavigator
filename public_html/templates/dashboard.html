@@ -1,11 +1,18 @@
 <ng-include src="'templates/menu.html'"></ng-include>
 
-<div class="container" ng-controller="DashboardController">
+<div class="container" ng-controller="DashboardController" ng-init="getDocCount()">
     <div class="center-div">
         <h3>Profile Completeness</h3>
         <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
                                                                             chart-data="profileCompletionCount"  chart-options="options" chart-labels="profileCompletionKey">
             </canvas> 
+        </div>
+        <div ng-show="user.type==='student'">
+            <h3>Document Completeness(Mandatory)</h3>
+            <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
+                                                                                chart-data="docCompletionCount"  chart-options="options" chart-labels="docCompletionKey">
+                </canvas> 
+            </div>
         </div>
     </div>
 

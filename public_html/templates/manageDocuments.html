@@ -4,11 +4,17 @@
     <div class="panel box-shadow col-lg-12 well">
 
 
-        <div class="gallery" ng-repeat="doc in docs" ng-click="viewDocument(doc)">
-            <img class="img-thumb" src="https://image.flaticon.com/icons/svg/337/337946.svg">
-            <div class="desc">
-                {{doc.document_name}}
+        <div class="gallery" ng-repeat="doc in docs">
+            <div>
+                <span class="btn btn-danger delete-btn" ng-click="deleteDoc(doc)"><i class="fa fa-trash fa-lg fa-inverse"></i></span>
             </div>
+            <div ng-click="viewDocument(doc)">
+                <img class="img-thumb" src="https://image.flaticon.com/icons/svg/337/337946.svg">
+                <div class="desc">
+                    {{doc.document_name}}
+                </div>
+            </div>
+
         </div>
     </div>
 
