@@ -1,0 +1,54 @@
+
+
+<div class="container" ng-controller="ContactUsController">
+    <br>
+    <div class="card-timeline radius shadowDepth1">
+        <form ng-submit="sendMsg()">
+            <div class="card__image border-tlr-radius">
+                <img src="https://vimm.com/wp-content/uploads/2012/04/feature-contact-us-1180x400.jpg   " alt="contact us" class="border-tlr-radius">
+            </div>
+
+            <div class="card__content card__padding">
+
+
+                <div class="card__meta">
+
+                    <div class="col-sm-12">
+                        <div class="form-group">
+
+                            <strong>Name</strong>
+                            <input type="text" placeholder="Enter Your Name Here.." class="form-control" ng-model="msg.name" required="">
+
+
+                        </div>					
+                        <div class="form-group">
+
+                            <strong>Email Address</strong>
+                            <input type="text" placeholder="Enter Your Email Id  Here.." class="form-control" ng-model="msg.email" required="">
+
+
+                        </div>
+                        <div class="form-group">
+                            <strong>Message</strong>
+                            <textarea placeholder="Enter Message Here.." rows="3" class="form-control" ng-model="msg.msg" required=""></textarea>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+            <div class="card__action">
+                <div class="center">
+                    <button type="submit" class="btn btn-info">Submit</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+</div>

@@ -260,7 +260,44 @@ recomSubApp.controller('ViewApplicationsController', function ($scope, userServi
 });
 recomSubApp.controller('SignupController', function ($scope, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.castes = [];
-
+    $scope.statesArrray = [
+        {"code": "AN", "name": "Andaman and Nicobar Islands"},
+        {"code": "AP", "name": "Andhra Pradesh"},
+        {"code": "AR", "name": "Arunachal Pradesh"},
+        {"code": "AS", "name": "Assam"},
+        {"code": "BR", "name": "Bihar"},
+        {"code": "CG", "name": "Chandigarh"},
+        {"code": "CH", "name": "Chhattisgarh"},
+        {"code": "DH", "name": "Dadra and Nagar Haveli"},
+        {"code": "DD", "name": "Daman and Diu"},
+        {"code": "DL", "name": "Delhi"},
+        {"code": "GA", "name": "Goa"},
+        {"code": "GJ", "name": "Gujarat"},
+        {"code": "HR", "name": "Haryana"},
+        {"code": "HP", "name": "Himachal Pradesh"},
+        {"code": "JK", "name": "Jammu and Kashmir"},
+        {"code": "JH", "name": "Jharkhand"},
+        {"code": "KA", "name": "Karnataka"},
+        {"code": "KL", "name": "Kerala"},
+        {"code": "LD", "name": "Lakshadweep"},
+        {"code": "MP", "name": "Madhya Pradesh"},
+        {"code": "MH", "name": "Maharashtra"},
+        {"code": "MN", "name": "Manipur"},
+        {"code": "ML", "name": "Meghalaya"},
+        {"code": "MZ", "name": "Mizoram"},
+        {"code": "NL", "name": "Nagaland"},
+        {"code": "OR", "name": "Odisha"},
+        {"code": "PY", "name": "Puducherry"},
+        {"code": "PB", "name": "Punjab"},
+        {"code": "RJ", "name": "Rajasthan"},
+        {"code": "SK", "name": "Sikkim"},
+        {"code": "TN", "name": "Tamil Nadu"},
+        {"code": "TS", "name": "Telangana"},
+        {"code": "TR", "name": "Tripura"},
+        {"code": "UK", "name": "Uttarakhand"},
+        {"code": "UP", "name": "Uttar Pradesh"},
+        {"code": "WB", "name": "West Bengal"}
+    ];
     $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
             .success(function (data) {
                 $scope.castes = data;
@@ -504,9 +541,73 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
 
     };
 });
+recomSubApp.controller('ContactUsController', function ($scope, alertify, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
+    $scope.sendMsg = function () {
+        $scope.msg.view = CONSTANTS.VIEW.CONTACTUS;
+        $.post(CONSTANTS.SERVICES.APIURL, $scope.msg)
+                .success(function (data) {
+                    if (data === 'Insertion Success')
+                    {
+                        alertify.logPosition("top center");
+                        alertify.success("We have registered your feedback. Thank You!");
+                    }
+                    $location.path("/home");
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+});
 recomSubApp.controller('ManageProfileController', function ($scope, alertify, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.user = userService.getUser();
 //    $scope.user.userType='student';
+    $scope.statesArrray = [
+        {"code": "AN", "name": "Andaman and Nicobar Islands"},
+        {"code": "AP", "name": "Andhra Pradesh"},
+        {"code": "AR", "name": "Arunachal Pradesh"},
+        {"code": "AS", "name": "Assam"},
+        {"code": "BR", "name": "Bihar"},
+        {"code": "CG", "name": "Chandigarh"},
+        {"code": "CH", "name": "Chhattisgarh"},
+        {"code": "DH", "name": "Dadra and Nagar Haveli"},
+        {"code": "DD", "name": "Daman and Diu"},
+        {"code": "DL", "name": "Delhi"},
+        {"code": "GA", "name": "Goa"},
+        {"code": "GJ", "name": "Gujarat"},
+        {"code": "HR", "name": "Haryana"},
+        {"code": "HP", "name": "Himachal Pradesh"},
+        {"code": "JK", "name": "Jammu and Kashmir"},
+        {"code": "JH", "name": "Jharkhand"},
+        {"code": "KA", "name": "Karnataka"},
+        {"code": "KL", "name": "Kerala"},
+        {"code": "LD", "name": "Lakshadweep"},
+        {"code": "MP", "name": "Madhya Pradesh"},
+        {"code": "MH", "name": "Maharashtra"},
+        {"code": "MN", "name": "Manipur"},
+        {"code": "ML", "name": "Meghalaya"},
+        {"code": "MZ", "name": "Mizoram"},
+        {"code": "NL", "name": "Nagaland"},
+        {"code": "OR", "name": "Odisha"},
+        {"code": "PY", "name": "Puducherry"},
+        {"code": "PB", "name": "Punjab"},
+        {"code": "RJ", "name": "Rajasthan"},
+        {"code": "SK", "name": "Sikkim"},
+        {"code": "TN", "name": "Tamil Nadu"},
+        {"code": "TS", "name": "Telangana"},
+        {"code": "TR", "name": "Tripura"},
+        {"code": "UK", "name": "Uttarakhand"},
+        {"code": "UP", "name": "Uttar Pradesh"},
+        {"code": "WB", "name": "West Bengal"}
+    ];
     $scope.majors = [];
     $scope.sms = [];
     if ($scope.user.type === 'student')
@@ -528,13 +629,13 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
 
                 });
 
-        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS,type:'major'})
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: 'major'})
                 .success(function (data) {
-                    $scope.majors=data;
-                        if (!$scope.$$phase)
-                            $scope.$apply();
+                    $scope.majors = data;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
-                    
+
                 })
                 .error(function (xhr, status, error) {
                     // error handling
@@ -1298,12 +1399,14 @@ recomApp.constant('CONSTANTS', (function () {
     var CONSTANTS = {};
     var SERVICES = {
 //         APIURL: 'http://ec2-54-169-136-45.ap-southeast-1.compute.amazonaws.com/api/fm/v0/users'
-//        APIURL: 'http://career.navigator.thesolutioncircle.in/ServiceController.php'
+//        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
         APIURL: 'http://localhost/recom_api/ServiceController.php',
         FILEPATH: 'http://localhost/recom_api',
-        UPLOADURL: 'http://localhost/recom_api/fileUpload.php'
+//        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
+        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
+//        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
-                // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
+        // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
     var INSTAMOJO = {
         "Card Number": "4242 4242 4242 4242",
@@ -1335,7 +1438,8 @@ recomApp.constant('CONSTANTS', (function () {
         GETDOCCOUNT: 'get doc count',
         DELETEDOCUMENT: 'delete document',
         CHANGEPASSWORD: 'change password',
-        GETPAYMENTDETAILS: 'get payment details'
+        GETPAYMENTDETAILS: 'get payment details',
+        CONTACTUS: 'contact us'
     };
 
     CONSTANTS.SERVICES = SERVICES;

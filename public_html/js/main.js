@@ -26,7 +26,7 @@ recomApp.run(function ($rootScope, $route, $location, $cookieStore, $templateCac
             });
         }
 
-        var restrictedPage = $.inArray($location.path(), ['/home', '/login', '/signup']) === -1;
+        var restrictedPage = $.inArray($location.path(), ['/home', '/login', '/signup','/contactUs']) === -1;
 
         if (restrictedPage && (!$cookieStore.get("recomApp")))
         {
@@ -48,6 +48,10 @@ recomApp.config(['$routeProvider', '$locationProvider',
                 })
                 .when('/login', {
                     templateUrl: 'templates/login.html',
+                    activetab: 'Home'
+                })
+                .when('/contactUs', {
+                    templateUrl: 'templates/contactUs.html',
                     activetab: 'Home'
                 })
                 .when('/signup', {
