@@ -992,7 +992,18 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
     }
     $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETADMISSIONSTATUS, id: $scope.user.id})
             .success(function (data) {
-                $scope.admitted = data;
+                if (data === 'true') {
+                    $scope.admitted = true;
+                    if ($location.$$path === '/searchCollegeResults') {
+                        alertify.logPosition("top center");
+                        alertify.error("You are already admitted so you can't apply");
+                    }
+                }
+                else
+                    $scope.admitted = false;
+                if ($scope.user.doc_count)
+                    $scope.admitted = $scope.admitted || $scope.user.doc_count !== 3;
+
                 if (!$scope.$$phase)
                     $scope.$apply();
             })
@@ -1057,6 +1068,7 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                     $scope.user.doc_count = data.count;
                     if (data.count !== "3")
                     {
+                        $scope.admitted = true;
                         alertify.logPosition("top center");
                         alertify.error("You Can't Apply As You Haven't Uploaded Mandatory Documents.");
                     }
@@ -1399,14 +1411,14 @@ recomApp.constant('CONSTANTS', (function () {
     var CONSTANTS = {};
     var SERVICES = {
 //         APIURL: 'http://ec2-54-169-136-45.ap-southeast-1.compute.amazonaws.com/api/fm/v0/users'
-//        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
-        APIURL: 'http://localhost/recom_api/ServiceController.php',
-        FILEPATH: 'http://localhost/recom_api',
-//        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
-        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
-//        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
+        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
+//        APIURL: 'http://localhost/recom_api/ServiceController.php',
+//        FILEPATH: 'http://localhost/recom_api',
+        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
+//        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
+        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
-        // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
+                // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
     var INSTAMOJO = {
         "Card Number": "4242 4242 4242 4242",
