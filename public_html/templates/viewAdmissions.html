@@ -1,0 +1,29 @@
+<ng-include src="'templates/menu.html'"></ng-include>
+<div class="container" ng-controller="ViewAdmissionsController" >
+    <table>
+        <caption>Admissions Of {{admissions[0].stream_name}}({{admissions[0].specialization}})</caption>
+        <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Application Id</th>
+                <th scope="col">Payment ID</th>
+                <th scope="col">Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="adm in admissions">
+                <td data-label="Name">{{adm.name}}</td>
+                <td data-label="Application Id">{{adm.application_id}}</td>
+                <td data-label="Payment ID">{{adm.purchase_token}}</td>
+                <td data-label="">
+                    <button class="btn btn-info" title="View Profile" ng-click="viewProfile(adm);"><i class="fa fa-lg fa-eye"></i></button>
+                    <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
+                </td>
+
+            </tr>
+
+        </tbody>
+    </table>
+    <br>
+</div>

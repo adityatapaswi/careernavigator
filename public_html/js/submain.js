@@ -368,7 +368,16 @@ recomSubApp.controller('SignupController', function ($scope, alertify, $location
 
     };
 });
-recomSubApp.controller('ManageCoursesController', function ($scope, userService, alertify, $location, $window, $cookieStore, $http, CONSTANTS) {
+recomSubApp.controller('ViewAdmissionsController', function ($scope, userService, alertify, $location, objTransferService, $cookieStore, $http, CONSTANTS) {
+    $scope.admissions = objTransferService.getObj();
+    if (!$scope.admissions.length)
+        $location.path('/manageCourses');
+    $scope.viewProfile = function (application) {
+        objTransferService.setObj(application);
+        $location.path('/viewProfile');
+    };
+});
+recomSubApp.controller('ManageCoursesController', function ($scope, userService, alertify, $location, objTransferService, $cookieStore, $http, CONSTANTS) {
     $scope.user = userService.getUser();
 
     $scope.majorsFilter = [];
@@ -440,6 +449,28 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     if (error !== undefined) {
                         alertify.logPosition("top center");
                         alertify.error("Something Went Wrong");
+
+
+                    }
+
+                });
+    };
+    $scope.viewAdmissions = function (course) {
+
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETADMISSIONSFORCOURSE, sid: course.stream_id, cid: course.college_id})
+                .success(function (data) {
+                    if (data.length) {
+                        objTransferService.setObj(data);
+                        $location.path('/viewAdmissions');
+                    }
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("No Admissions Found");
 
 
                     }
@@ -610,7 +641,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
     ];
     $scope.majors = [];
     $scope.sms = [];
-    if ($scope.user.type === 'student')
+    if ($scope.user && $scope.user.type === 'student')
     {
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
                 .success(function (data) {
@@ -651,6 +682,68 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
 
 
     }
+    $scope.gotoResetLink = function () {
+        $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETRESETLINK, email: $scope.reset.email})
+                .success(function (data) {
+                    if (data.type)
+                    {
+                        $location.path("/forgotPass").search({email: $scope.reset.email, type: data.type});
+
+                    }
+                    if (!$scope.$$phase)
+                        $scope.$apply();
+                })
+                .error(function (xhr, status, error) {
+                    // error handling
+                    if (error !== undefined) {
+                        alertify.logPosition("top center");
+                        alertify.error("Email Not Valid");
+
+
+                    }
+
+                });
+    };
+    $scope.getSearchParams = function () {
+        $scope.reset = {};
+        if ($location.$$search.email)
+        {
+            $scope.reset.email = $location.$$search.email;
+            $scope.reset.type = $location.$$search.type;
+        }
+    };
+    $scope.resetPass = function () {
+        if ($scope.reset.password === $scope.reset.cpass) {
+            $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.CHANGEPASSWORD, type: $scope.reset.type, email: $scope.reset.email, pass: $scope.reset.password})
+                    .success(function (data) {
+                        if (data.reply.includes('Password Update Succesfully'))
+                        {
+                            alertify.logPosition("top center");
+                            alertify.success(data + " Please Login With New Credentials");
+                            $cookieStore.remove("recomApp");
+                            $location.path("/");
+                            $window.location.reload();
+                        }
+                        if (!$scope.$$phase)
+                            $scope.$apply();
+                    })
+                    .error(function (xhr, status, error) {
+                        // error handling
+                        if (error !== undefined) {
+                            alertify.logPosition("top center");
+                            alertify.error("Something Went Wrong");
+
+
+                        }
+
+                    });
+        }
+        else {
+            alertify.logPosition("top center");
+            alertify.error("Password Should Match Confirm Password");
+        }
+
+    };
     $scope.changePass = function () {
         if ($scope.oldpass === $scope.user.password) {
             if ($scope.password === $scope.cpass) {
@@ -783,7 +876,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
         var date = new Date(dateStr);
         return date;
     }
-    if ($scope.user.type === 'student')
+    if ($scope.user && $scope.user.type === 'student')
         $scope.user.dob = parseDate($scope.user.dob);
     $scope.quals = ["H.S.C.", "Diploma"];
 //console.log($scope.user.dob);
@@ -796,7 +889,7 @@ recomSubApp.controller('DashboardController', function ($scope, userService, $lo
     var keys = Object.keys($scope.user);
     var len = keys.length;
     var comp = 0, incom = 0;
-    console.log("keys " + len);
+//    console.log("keys " + len);
     for (var i = 0; i < len; i++) {
         if ($scope.user[keys[i]] === undefined || $scope.user[keys[i]] === null || $scope.user[keys[i]] === '')
             incom++;
@@ -1002,7 +1095,7 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                 else
                     $scope.admitted = false;
                 if ($scope.user.doc_count)
-                    $scope.admitted = $scope.admitted || $scope.user.doc_count !== 3;
+                    $scope.admitted = $scope.admitted || $scope.user.doc_count !== "3";
 
                 if (!$scope.$$phase)
                     $scope.$apply();
@@ -1411,14 +1504,14 @@ recomApp.constant('CONSTANTS', (function () {
     var CONSTANTS = {};
     var SERVICES = {
 //         APIURL: 'http://ec2-54-169-136-45.ap-southeast-1.compute.amazonaws.com/api/fm/v0/users'
-        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
-//        APIURL: 'http://localhost/recom_api/ServiceController.php',
-//        FILEPATH: 'http://localhost/recom_api',
-        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
-//        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
-        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
+//        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
+        APIURL: 'http://localhost/recom_api/ServiceController.php',
+        FILEPATH: 'http://localhost/recom_api',
+//        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
+        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
+//        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
-                // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
+        // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
     var INSTAMOJO = {
         "Card Number": "4242 4242 4242 4242",
@@ -1451,6 +1544,8 @@ recomApp.constant('CONSTANTS', (function () {
         DELETEDOCUMENT: 'delete document',
         CHANGEPASSWORD: 'change password',
         GETPAYMENTDETAILS: 'get payment details',
+        GETADMISSIONSFORCOURSE: 'get admissions for course',
+        GETRESETLINK: 'get reset link',
         CONTACTUS: 'contact us'
     };
 

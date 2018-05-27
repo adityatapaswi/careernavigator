@@ -1,0 +1,60 @@
+<div class="container" ng-controller="ReviewApplicationController" ng-init="getStudentDetails();">
+    <br>
+    <h2 class="center">Student Profile</h2>
+    <div class="card-timeline radius shadowDepth1">
+        <div class="card__content card__padding">
+
+            <div class="card__meta">
+
+                <img src="img/male.png" ng-show="student.gender === 'Male'" height="50" width="50" alt="user">
+                <img src="img/female.png" ng-show="student.gender === 'Female'" height="50" width="50" alt="user">
+                <h2>{{student.name||application.student_name}}</h2>
+                <a href="">{{student.dob}}</a>
+            </div>
+
+            <article class="card__article">
+
+                <h4><strong>Profile Summary</strong></h4>
+
+                <hr>
+                <h4><strong>Educational Details</strong></h4>
+                <hr>
+                <p>Highest Education: {{student.max_qualification}}</p>
+                <p>Major: {{student.major}}</p>
+                <p>Percentage: {{student.percentage}}</p>
+                <hr> 
+
+                <h4><strong>Contact Details</strong></h4>
+                <hr>
+                <p>City: {{student.city}}</p>
+                <p>State: {{student.state}}</p>
+                <p>Zip: {{student.zip}}</p>
+                <p>Contact: {{student.contact}}</p>
+                <hr> 
+
+                <h4><strong>Misc Details</strong></h4>
+                <hr>
+                <p>Reservation Class: {{student.reservation}}</p>
+            </article>
+            <hr>
+
+
+
+
+            <br>
+        </div>
+    </div>
+    <article  class="card__article">
+
+        <div ng-controller="DocsController" ng-init="getDocumentsOfStudent(application.student_id);">
+            <h4><strong>Applicant's Documents</strong></h4>
+            <div class="col-lg-12">
+                <div class="gallery"  ng-repeat="doc in docs" ng-click="viewDocument(doc)">
+                    <img class="img-thumb" src="./img/337946.svg">
+                    <div class="desc">{{doc.document_name}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article>
+</div>

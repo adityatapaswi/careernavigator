@@ -14,6 +14,7 @@
                 <th scope="col">Total Seats</th>
                 <th scope="col">Reservations</th>
                 <th scope="col">Allocated Seats</th>
+                <th scope="col">Available Seats</th>
                 <th scope="col">Fees</th>
                 <th scope="col">Action</th>
 
@@ -25,11 +26,12 @@
                 <td data-label="Total Seats">{{course.total_intake}}</td>
                 <td data-label="Reservations">{{course.reservations}}</td>
                 <td data-label="Allocated Seats">{{course.allocated_seats}}</td>
+                <td data-label="Available Seats">{{course.available_seats}}</td>
                 <td data-label="Fees">{{course.fees}}  / Year</td>
                 <!--<td data-label="Seats Available"><span class="green" ng-class="{red: college.seatsAvailable <= 10}">{{college.seatsAvailable}}</span></td>-->
                 <!--<td data-label="Type"><span class="green" ng-class="{red: transaction.type === 'DB'}">{{transaction.type}}</span></td>-->
                 <td data-label="">
-                    <button class="btn btn-info" ng-click="apply();">Edit</button>
+                    <button class="btn btn-info" title="View Admissions" ng-click="viewAdmissions(course);"><i class="fa fa-lg fa-eye"></i></button>
                     <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
                 </td>
 
