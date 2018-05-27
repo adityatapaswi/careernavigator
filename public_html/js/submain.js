@@ -1504,12 +1504,12 @@ recomApp.constant('CONSTANTS', (function () {
     var CONSTANTS = {};
     var SERVICES = {
 //         APIURL: 'http://ec2-54-169-136-45.ap-southeast-1.compute.amazonaws.com/api/fm/v0/users'
-//        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
-        APIURL: 'http://localhost/recom_api/ServiceController.php',
-        FILEPATH: 'http://localhost/recom_api',
-//        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
-        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
-//        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
+        APIURL: 'http://career-navigator.thesolutioncircle.in/api/ServiceController.php',
+//        APIURL: 'http://localhost/recom_api/ServiceController.php',
+//        FILEPATH: 'http://localhost/recom_api',
+        FILEPATH: 'http://career-navigator.thesolutioncircle.in/api',
+//        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
+        UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
         // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
