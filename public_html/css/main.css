@@ -758,6 +758,16 @@ textarea {
     width: 100%;
     background: rgba( 255, 255, 255,0.9) url('../img/load.gif') 50% 50% no-repeat;
 }
+.loading-spiner-holder2 {
+    /*display: none;*/
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    background: rgba( 255, 255, 255,0.9) url('../img/load.gif') 50% 50% no-repeat;
+}
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
     display: none;
     position: fixed;

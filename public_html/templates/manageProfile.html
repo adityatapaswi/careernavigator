@@ -146,14 +146,14 @@
                             <div class="col-sm-4 form-group">
                                 <strong>Highest Qualification</strong>
                                 <select class="form-control" ng-model="user.max_qualification" required="">
-                                    <option disabled="" value="-1" selected>Select Max Qualification</option>
+                                    <option disabled="" value="" selected>Select Max Qualification</option>
                                     <option ng-repeat="qual in quals" value="{{qual}}">{{qual}}</option>
                                 </select>                            
                             </div>	
                             <div class="col-sm-4 form-group">
                                 <strong>Major</strong>
                                 <select class="form-control" ng-model="user.major" required="">
-                                    <option disabled="" value="-1" selected>Select Major</option>
+                                    <option disabled="" value="" selected>Select Major</option>
                                     <option ng-repeat="major in majors" value="{{major.label}}">{{major.label}}</option>
                                 </select>     
                             </div>	
@@ -171,8 +171,5 @@
             </div>
         </div>
     </section>
-
-
-
-
+    <div class="loading-spiner-holder2" ng-show="loading || false"></div>
 </div>

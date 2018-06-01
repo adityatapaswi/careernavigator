@@ -7,7 +7,7 @@
                                                                             chart-data="profileCompletionCount"  chart-options="options" chart-labels="profileCompletionKey">
             </canvas> 
         </div>
-        <div ng-show="user.type==='student'">
+        <div ng-show="user.type === 'student'">
             <h3>Document Completeness(Mandatory)</h3>
             <div style=" height: 100%; width: 100%; max-width: 500px;"> <canvas id="pie" class="chart chart-doughnut" 
                                                                                 chart-data="docCompletionCount"  chart-options="options" chart-labels="docCompletionKey">
@@ -61,7 +61,7 @@
         </div>
 
     </div>
-    <div ng-controller="DocsController" ng-init="getDocuments();">
+    <div ng-controller="DocsController" ng-init="getDocuments();" ng-show="user.type === 'student'">
         <h4><strong>Your Documents</strong></h4>
         <div class="col-lg-12 well">
             <div class="gallery"  ng-repeat="doc in docs" ng-click="viewDocument(doc)">
@@ -70,6 +70,7 @@
                 </div>
             </div>
         </div>
+        <div class="loading-spiner-holder2" ng-show="loading || false"></div>
     </div>
-
+    <div class="loading-spiner-holder2" ng-show="loading || false"></div>
 </div>

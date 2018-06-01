@@ -9,12 +9,15 @@
             </div>
             <div class="row">
                 <div class="col-md-4">
+                    <strong>Major</strong>
                     <div ng-dropdown-multiselect="" options="majors" selected-model="majorsFilter" events="majorsEvents" extra-settings="settings"></div>
                 </div>
                 <div class="col-md-4" ng-show="streams.length">                
+                    <strong>Stream</strong>
                     <div ng-dropdown-multiselect="" options="streams" selected-model="streamsFilter" events="streamsEvents" extra-settings="settings"></div>   
                 </div>
                 <div class="col-md-4" ng-show="specializations.length">
+                    <strong>Specialization</strong>
                     <div ng-dropdown-multiselect="" options="specializations" selected-model="specFilter" events="specEvents" extra-settings="settings"></div>
                 </div>
 
@@ -78,4 +81,5 @@
             </div>
         </form>
     </div>
+    <div class="loading-spiner-holder2" ng-show="loading || false"></div>
 </div>

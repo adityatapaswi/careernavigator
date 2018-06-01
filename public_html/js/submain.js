@@ -26,10 +26,12 @@ recomSubApp.controller('AdmitCardController', function ($scope, alertify, userSe
     if (!$scope.application.id)
         $location.path('/viewApplications');
     $scope.getPaymentDetails = function () {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETPAYMENTDETAILS, id: $scope.application.id})
                 .success(function (data) {
                     if (data.purchase_token)
                         $scope.application.pay_id = data.purchase_token;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -38,15 +40,17 @@ recomSubApp.controller('AdmitCardController', function ($scope, alertify, userSe
                     if (error !== undefined) {
                         alertify.logPosition("top center");
                         alertify.error("Something Went Wrong");
-
-
                     }
-
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
                 });
     };
     $scope.download = function () {
+        $scope.loading = true;
         html2canvas(document.getElementById('admitCard'), {
             onrendered: function (canvas) {
+                $scope.loading = false;
                 var data = canvas.toDataURL();
                 var docDefinition = {
                     content: [{
@@ -86,6 +90,7 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                     text: 'Yes',
                     btnClass: 'btn-danger',
                     action: function (scope, button) {
+                        $scope.loading = true;
                         $doc.view = CONSTANTS.VIEW.DELETEDOCUMENT;
                         $.post(CONSTANTS.SERVICES.APIURL, $doc)
                                 .success(function (data) {
@@ -94,6 +99,7 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                                         alertify.success(data);
                                         $scope.getDocuments();
                                     }
+                                    $scope.loading = false;
                                     if (!$scope.$$phase)
                                         $scope.$apply();
                                 })
@@ -101,8 +107,11 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                                     // error handling
                                     if (error !== undefined) {
                                         alertify.logPosition("top center");
-                                        alertify.error("Somthing Went Wrong");
+                                        alertify.error("Faied To Delete Document");
                                     }
+                                    $scope.loading = false;
+                                    if (!$scope.$$phase)
+                                        $scope.$apply();
 
                                 });
                     }
@@ -119,9 +128,11 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
     };
     $scope.getDocuments = function () {
         if ($scope.user.type === 'student') {
+            $scope.loading = true;
             $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCUMENTS, id: $scope.user.id})
                     .success(function (data) {
                         $scope.docs = data;
+                        $scope.loading = false;
                         if (!$scope.$$phase)
                             $scope.$apply();
                     })
@@ -129,10 +140,11 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                         // error handling
                         if (error !== undefined) {
                             alertify.logPosition("top center");
-                            alertify.error("Something Went Wrong");
-
-
+                            alertify.error("No Documents Found");
                         }
+                        $scope.loading = false;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
 
                     });
         }
@@ -140,9 +152,11 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
     };
     $scope.getDocumentsOfStudent = function ($id) {
         if ($scope.user.type === 'college') {
+            $scope.loading = true;
             $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCUMENTS, id: $id})
                     .success(function (data) {
                         $scope.docs = data;
+                        $scope.loading = false;
                         if (!$scope.$$phase)
                             $scope.$apply();
                     })
@@ -150,10 +164,11 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                         // error handling
                         if (error !== undefined) {
                             alertify.logPosition("top center");
-                            alertify.error("Something Went Wrong");
-
-
+                            alertify.error("Failed To Get Docunents");
                         }
+                        $scope.loading = false;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
 
                     });
         }
@@ -165,6 +180,7 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
         for (var key in data) {
             form_data.append(key, data[key]);
         }
+        $scope.loading = true;
         $.ajax({
             url: CONSTANTS.SERVICES.UPLOADURL,
             data: form_data,
@@ -182,6 +198,7 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                 alertify.logPosition("top center");
                 alertify.error(data);
             }
+            $scope.loading = false;
             if (!$scope.$$phase)
                 $scope.$apply();
         })
@@ -189,11 +206,11 @@ recomSubApp.controller('DocsController', function ($scope, alertify, userService
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("Document Upload Failed");
                     }
-
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
                 });
     };
 });
@@ -206,6 +223,7 @@ recomSubApp.controller('ViewApplicationsController', function ($scope, userServi
         $location.path('/admitCard');
     };
     $scope.gotoPayment = function ($application) {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.MAKEPAYMENT, amount: $application.fees,
             purpose: "Fees for " + $application.stream_name,
             phone: $scope.user.contact,
@@ -213,20 +231,28 @@ recomSubApp.controller('ViewApplicationsController', function ($scope, userServi
             email: $scope.user.email
         })
                 .success(function (data) {
-                    $scope.reponse = JSON.parse(data);
-                    objTransferService.setObjUsingCookie($application);
-                    $window.location.href = $scope.reponse.payment_request.longurl;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
+                    $scope.reponse = JSON.parse(data);
+                    objTransferService.setObjUsingCookie($application);
+                    if ($scope.reponse.payment_request && $scope.reponse.payment_request.longurl)
+                        $window.location.href = $scope.reponse.payment_request.longurl;
+                    else {
+                        alertify.logPosition("top center");
+                        alertify.error("Couldn't Process Payment Request");
+                    }
+
                 })
                 .error(function (xhr, status, error) {
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("Couldn't Process Payment Request");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
@@ -236,9 +262,11 @@ recomSubApp.controller('ViewApplicationsController', function ($scope, userServi
         $location.path('/reviewApplication');
     };
     $scope.getApplications = function () {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETAPPLICATIONS, id: $scope.user.id, type: $scope.user.type})
                 .success(function (data) {
                     $scope.applications = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -246,10 +274,11 @@ recomSubApp.controller('ViewApplicationsController', function ($scope, userServi
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("No applications yet");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
@@ -298,20 +327,23 @@ recomSubApp.controller('SignupController', function ($scope, alertify, $location
         {"code": "UP", "name": "Uttar Pradesh"},
         {"code": "WB", "name": "West Bengal"}
     ];
+    $scope.loading = true;
     $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
             .success(function (data) {
                 $scope.castes = data;
+                $scope.loading = false;
                 if (!$scope.$$phase)
                     $scope.$apply();
             })
             .error(function (xhr, status, error) {
                 // error handling
-                if (error !== undefined) {
-                    alertify.logPosition("top center");
-                    alertify.error("Something Went Wrong");
-
-
-                }
+//                if (error !== undefined) {
+//                    alertify.logPosition("top center");
+//                    alertify.error("Something Went Wrong");
+//                }
+                $scope.loading = false;
+                if (!$scope.$$phase)
+                    $scope.$apply();
 
             });
 
@@ -336,22 +368,22 @@ recomSubApp.controller('SignupController', function ($scope, alertify, $location
         $scope.user.view = CONSTANTS.VIEW.SIGNUP;
         if ($scope.user.type === 'student')
             $scope.user.dob = formatDate();
-
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
                 .success(function (data) {
                     if (data.toString().includes('already'))
                     {
                         alertify.logPosition("top center");
                         alertify.error(data);
-
                     } else
                     {
                         alertify.logPosition("top center");
                         alertify.success(data);
                         $scope.gotohome();
-                        if (!$scope.$$phase)
-                            $scope.$apply();
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
 
                 })
@@ -359,10 +391,11 @@ recomSubApp.controller('SignupController', function ($scope, alertify, $location
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("Registration Failed!");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
@@ -397,20 +430,19 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
     $scope.specFilter = [];
     $scope.specializations = [];
     $scope.specEvents = {onSelectionChanged: function () {
+            $scope.loading = true;
             $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSTREAMID, major: $scope.majorsFilter[0].label, stream: $scope.streamsFilter[0].label, spec: $scope.specFilter[0].label})
                     .success(function (data) {
                         $scope.stream.sid = data.id;
+                        $scope.loading = false;
                         if (!$scope.$$phase)
                             $scope.$apply();
                     })
                     .error(function (xhr, status, error) {
                         // error handling
-                        if (error !== undefined) {
-                            alertify.logPosition("top center");
-                            alertify.error("Something Went Wrong");
-
-
-                        }
+                        $scope.loading = false;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
 
                     });
         }};
@@ -437,32 +469,31 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
 
     $scope.castes = [];
     $scope.getCastes = function () {
-
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
                 .success(function (data) {
                     $scope.castes = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
     $scope.viewAdmissions = function (course) {
-
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETADMISSIONSFORCOURSE, sid: course.stream_id, cid: course.college_id})
                 .success(function (data) {
                     if (data.length) {
                         objTransferService.setObj(data);
                         $location.path('/viewAdmissions');
                     }
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -471,17 +502,20 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     if (error !== undefined) {
                         alertify.logPosition("top center");
                         alertify.error("No Admissions Found");
-
-
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
     $scope.courses = [];
     $scope.getStreams = function () {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETCOLSTREAMS, id: $scope.user.id})
                 .success(function (data) {
                     $scope.courses = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
 
@@ -490,10 +524,11 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("No courses found");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
@@ -510,11 +545,13 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
             $scope.stream.sid = undefined;
         }
         $scope.stream.view = CONSTANTS.VIEW.ADDSTREAM;
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.stream)
                 .success(function (data) {
                     alertify.logPosition("top center");
                     alertify.success(data.reply);
                     $location.path('/manageCourses');
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
 
@@ -523,10 +560,12 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
+                        alertify.error("Stream Creation Failed");
 
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
@@ -541,6 +580,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
     };
 
     $scope.getSMS = function (type, majors, streams) {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: type, majors: majors, streams: streams})
                 .success(function (data) {
                     if (type === 'major') {
@@ -553,6 +593,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                     }
                     else
                         $scope.specializations = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
 
@@ -560,12 +601,9 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
         $scope.getCastes();
@@ -575,6 +613,7 @@ recomSubApp.controller('ManageCoursesController', function ($scope, userService,
 recomSubApp.controller('ContactUsController', function ($scope, alertify, userService, $location, $window, $cookieStore, $http, CONSTANTS) {
     $scope.sendMsg = function () {
         $scope.msg.view = CONSTANTS.VIEW.CONTACTUS;
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.msg)
                 .success(function (data) {
                     if (data === 'Insertion Success')
@@ -583,6 +622,7 @@ recomSubApp.controller('ContactUsController', function ($scope, alertify, userSe
                         alertify.success("We have registered your feedback. Thank You!");
                     }
                     $location.path("/home");
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -590,10 +630,11 @@ recomSubApp.controller('ContactUsController', function ($scope, alertify, userSe
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("Please Try Again We Need Your Valuable Feedback!!");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -643,39 +684,34 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
     $scope.sms = [];
     if ($scope.user && $scope.user.type === 'student')
     {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.RESERVATIONS})
                 .success(function (data) {
                     $scope.castes = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
-
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: 'major'})
                 .success(function (data) {
                     $scope.majors = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
-
-
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
@@ -683,6 +719,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
 
     }
     $scope.gotoResetLink = function () {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETRESETLINK, email: $scope.reset.email})
                 .success(function (data) {
                     if (data.type)
@@ -690,6 +727,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                         $location.path("/forgotPass").search({email: $scope.reset.email, type: data.type});
 
                     }
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -701,6 +739,9 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
 
 
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -714,6 +755,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
     };
     $scope.resetPass = function () {
         if ($scope.reset.password === $scope.reset.cpass) {
+            $scope.loading = true;
             $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.CHANGEPASSWORD, type: $scope.reset.type, email: $scope.reset.email, pass: $scope.reset.password})
                     .success(function (data) {
                         if (data.reply.includes('Password Update Succesfully'))
@@ -724,6 +766,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                             $location.path("/");
                             $window.location.reload();
                         }
+                        $scope.loading = false;
                         if (!$scope.$$phase)
                             $scope.$apply();
                     })
@@ -731,10 +774,11 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                         // error handling
                         if (error !== undefined) {
                             alertify.logPosition("top center");
-                            alertify.error("Something Went Wrong");
-
-
+                            alertify.error("Password Update Failed");
                         }
+                        $scope.loading = false;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
 
                     });
         }
@@ -747,6 +791,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
     $scope.changePass = function () {
         if ($scope.oldpass === $scope.user.password) {
             if ($scope.password === $scope.cpass) {
+                $scope.loading = true;
                 $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.CHANGEPASSWORD, type: $scope.user.type, email: $scope.user.email, pass: $scope.password})
                         .success(function (data) {
                             if (data.reply.includes('Password Update Succesfully'))
@@ -757,6 +802,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                                 $location.path("/");
                                 $window.location.reload();
                             }
+                            $scope.loading = false;
                             if (!$scope.$$phase)
                                 $scope.$apply();
                         })
@@ -764,10 +810,11 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                             // error handling
                             if (error !== undefined) {
                                 alertify.logPosition("top center");
-                                alertify.error("Something Went Wrong");
-
-
+                                alertify.error("Password Update Failed");
                             }
+                            $scope.loading = false;
+                            if (!$scope.$$phase)
+                                $scope.$apply();
 
                         });
             }
@@ -785,8 +832,12 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
     $scope.updateStudent = function () {
         $scope.user.dob = formatDate();
         $scope.user.view = CONSTANTS.VIEW.UPDATESTUDENT;
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
                 .success(function (data) {
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
                     //This sets cookies for application
                     $cookieStore.put("recomApp", data);
 
@@ -813,17 +864,22 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
+                        alertify.error("Failed To Update Profile");
 
 
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
     $scope.updateCollege = function () {
         $scope.user.view = CONSTANTS.VIEW.UPDATECOLLEGE;
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
                 .success(function (data) {
+
                     //This sets cookies for application
                     $cookieStore.put("recomApp", data);
 
@@ -843,6 +899,7 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                     });
 
                     $location.path("/home/dashboard");
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -850,10 +907,11 @@ recomSubApp.controller('ManageProfileController', function ($scope, alertify, us
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("Profile Updation Failed");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -910,6 +968,7 @@ recomSubApp.controller('DashboardController', function ($scope, userService, $lo
     $scope.getDocCount = function ()
     {
         if ($scope.user.type === 'student') {
+            $scope.loading = true;
             $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCCOUNT, id: $scope.user.id})
                     .success(function (data) {
                         $scope.user.doc_count = data.count;
@@ -919,17 +978,15 @@ recomSubApp.controller('DashboardController', function ($scope, userService, $lo
 
                         $scope.docCompletionKey = ["Complete", "Incomplete"];
 
+                        $scope.loading = false;
                         if (!$scope.$$phase)
                             $scope.$apply();
                     })
                     .error(function (xhr, status, error) {
                         // error handling
-                        if (error !== undefined) {
-                            alertify.logPosition("top center");
-                            alertify.error("Something Went Wrong");
-
-
-                        }
+                        $scope.loading = false;
+                        if (!$scope.$$phase)
+                            $scope.$apply();
 
                     });
         }
@@ -943,17 +1000,11 @@ recomSubApp.controller('ReviewApplicationController', function ($scope, alertify
 
     $scope.updateStatus = function (status)
     {
-//        alertify.confirm("Are you sure you want to "+status+" the applicant?" ,
-//                function () {
-//                    alertify.success('Ok');
-//                },
-//                function () {
-//                    alertify.error('Cancel');
-//                });
         if (status === 'Reject')
             status = 'REJECTED';
         else
             status = "SELECTED";
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.UPDATEAPPLCATIONSTATUS, id: $scope.application.id, status: status})
                 .success(function (data) {
                     if (data.includes('Successfully'))
@@ -967,6 +1018,7 @@ recomSubApp.controller('ReviewApplicationController', function ($scope, alertify
                         alertify.error(data);
                     }
                     $location.path('/viewApplications');
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -974,19 +1026,24 @@ recomSubApp.controller('ReviewApplicationController', function ($scope, alertify
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
+                        alertify.error("Failed To Update Application Status");
 
 
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 //                
     };
     $scope.getStudentDetails = function ()
     {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSTUDENTDETAILS, id: $scope.application.student_id})
                 .success(function (data) {
                     $scope.student = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -995,9 +1052,10 @@ recomSubApp.controller('ReviewApplicationController', function ($scope, alertify
                     if (error !== undefined) {
                         alertify.logPosition("top center");
                         alertify.error("Something Went Wrong");
-
-
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -1007,6 +1065,7 @@ recomSubApp.controller('RedirectController', function ($scope, alertify, $locati
     $scope.application = objTransferService.getObjUsingCookie();
     if ($location.$$search.payment_id)
     {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {
             view: CONSTANTS.VIEW.ADMITSTUDENT,
             student_id: $scope.application.student_id,
@@ -1018,6 +1077,7 @@ recomSubApp.controller('RedirectController', function ($scope, alertify, $locati
                 .success(function (data) {
                     if (data.includes('Successfully'))
                         $location.path('/viewApplications');
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -1025,13 +1085,20 @@ recomSubApp.controller('RedirectController', function ($scope, alertify, $locati
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
+                        alertify.error("Payment Registration Failed");
 
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
+    }
+    else {
+        alertify.logPosition("top center");
+        alertify.error("Payment Failed");
+        $location.path('/viewApplications');
     }
 });
 recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $location, userService, objTransferService, $http, CONSTANTS) {
@@ -1083,6 +1150,7 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
     {
         $location.path('/searchColleges');
     }
+    $scope.loading = true;
     $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETADMISSIONSTATUS, id: $scope.user.id})
             .success(function (data) {
                 if (data === 'true') {
@@ -1097,17 +1165,14 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                 if ($scope.user.doc_count)
                     $scope.admitted = $scope.admitted || $scope.user.doc_count !== "3";
 
+                $scope.loading = false;
                 if (!$scope.$$phase)
                     $scope.$apply();
             })
             .error(function (xhr, status, error) {
-                // error handling
-                if (error !== undefined) {
-                    alertify.logPosition("top center");
-                    alertify.error("Something Went Wrong");
-
-
-                }
+                $scope.loading = false;
+                if (!$scope.$$phase)
+                    $scope.$apply();
 
             });
 
@@ -1121,28 +1186,29 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                 filter = filter + state.label;
 
         });
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETCITIES, states: filter})
                 .success(function (data) {
                     $scope.cities = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
     $scope.searchCollege = function () {
         $scope.searchCondition = objTransferService.getObj();
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.SEARCHCOLLEGE, condition: $scope.searchCondition})
                 .success(function (data) {
                     $scope.colleges = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -1150,12 +1216,14 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("No Colleges Found");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETDOCCOUNT, id: $scope.user.id})
                 .success(function (data) {
                     $scope.user.doc_count = data.count;
@@ -1165,21 +1233,20 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                         alertify.logPosition("top center");
                         alertify.error("You Can't Apply As You Haven't Uploaded Mandatory Documents.");
                     }
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
     $scope.getSMS = function (type, majors, streams) {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSMS, type: type, majors: majors, streams: streams})
                 .success(function (data) {
 
@@ -1192,6 +1259,7 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                     }
                     else
                         $scope.specializations = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
 
@@ -1199,31 +1267,26 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                 })
                 .error(function (xhr, status, error) {
                     // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
 
     };
     $scope.getStates = function () {
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, {view: CONSTANTS.VIEW.GETSTATES})
                 .success(function (data) {
                     $scope.states = data;
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
                 .error(function (xhr, status, error) {
-                    // error handling
-                    if (error !== undefined) {
-                        alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
-                    }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -1304,6 +1367,7 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
             stream_id: $college.stream_id,
             view: CONSTANTS.VIEW.APPLYTOCOLLEGE
         };
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $req)
                 .success(function (data) {
                     if (data.reply.includes('Succesfully'))
@@ -1317,19 +1381,20 @@ recomSubApp.controller('SearchCollegeController', function ($scope, alertify, $l
                         alertify.error(data.reply);
                     }
                     $location.path("/viewApplications");
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
-
 
                 })
                 .error(function (xhr, status, error) {
                     // error handling
                     if (error !== undefined) {
                         alertify.logPosition("top center");
-                        alertify.error("Something Went Wrong");
-
-
+                        alertify.error("Application Failed.. Please Try Again");
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -1362,6 +1427,7 @@ recomSubApp.controller('LoginController', function ($scope, alertify, $location,
     $scope.login = function () {
         //This authenticates user
         $scope.user.view = CONSTANTS.VIEW.LOGIN;
+        $scope.loading = true;
         $.post(CONSTANTS.SERVICES.APIURL, $scope.user)
                 .success(function (data) {
                     //This sets cookies for application
@@ -1383,6 +1449,7 @@ recomSubApp.controller('LoginController', function ($scope, alertify, $location,
                     });
 
                     $location.path("/home/dashboard");
+                    $scope.loading = false;
                     if (!$scope.$$phase)
                         $scope.$apply();
                 })
@@ -1394,6 +1461,9 @@ recomSubApp.controller('LoginController', function ($scope, alertify, $location,
 
 
                     }
+                    $scope.loading = false;
+                    if (!$scope.$$phase)
+                        $scope.$apply();
 
                 });
     };
@@ -1511,7 +1581,7 @@ recomApp.constant('CONSTANTS', (function () {
 //        UPLOADURL: 'http://localhost/recom_api/fileUpload.php',
         UPLOADURL: 'http://career-navigator.thesolutioncircle.in/api/fileUpload.php'
 //        BASE_PATH: 'http://192.168.1.115:8080/api/fm/v0/'
-        // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
+                // 'http://localhost:8080/api/fm/v0/' //'http://ec2-52-74-20-101.ap-southeast-1.compute.amazonaws.com/api/fm/v0/' 
     };
     var INSTAMOJO = {
         "Card Number": "4242 4242 4242 4242",

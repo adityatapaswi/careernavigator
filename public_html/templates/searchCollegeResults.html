@@ -7,7 +7,7 @@
             <tr>
                 <th scope="col">Name</th>
                 <th scope="col">Address</th>
-                <th scope="col">Rating</th>
+                <th scope="col">Duration</th>
                 <th scope="col">Course</th>
                 <th scope="col">Fees</th>
                 <th scope="col">Seats Available</th>
@@ -19,21 +19,20 @@
             <tr ng-repeat="college in colleges">
                 <td data-label="Name">{{college.college_name}}</td>
                 <td data-label="Address">{{college.address}}</td>
-                <td data-label="Rating"><span class="green" ng-class="{red: college.rating <= 2}">{{college.rating||3}}</span></td>
+                <td data-label="Duration">{{college.duration}}</td>
                 <td data-label="Course">{{college.stream_name}}({{college.specialization}})</td>
                 <td data-label="Fees">{{college.fees}} &#8377; / Year</td>
                 <td data-label="Seats Available"><span class="green" ng-class="{red: college.available_seats <= 10}">{{college.available_seats}}</span></td>
                 <!--<td data-label="Type"><span class="green" ng-class="{red: transaction.type === 'DB'}">{{transaction.type}}</span></td>-->
                 <td data-label="">
                     <button class="btn btn-info" ng-hide="admitted" ng-click="apply(college);">Apply</button>
-                    <button class="btn btn-success" title="View Website"><a target="_blank" href="http://{{college.college_website}}"><i class="fa fa-lg fa-globe"></i></a></button>
+                    <a target="_blank" href="http://{{college.college_website}}"><button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button></a>
                 </td>
 
             </tr>
 
         </tbody>
     </table>
-
     <br>
-
+    <div class="loading-spiner-holder2" ng-show="loading || false"></div>
 </div>

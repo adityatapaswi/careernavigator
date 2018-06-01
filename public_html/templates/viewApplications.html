@@ -1,7 +1,7 @@
 <ng-include src="'templates/menu.html'"></ng-include>
 <div class="container" ng-controller="ViewApplicationsController" ng-init="getApplications();">
-  
-    <table ng-show="user.type=='student'">
+
+    <table ng-show="user.type == 'student'">
         <caption>Your Applications</caption>
         <thead>
             <tr>
@@ -20,16 +20,16 @@
                 <td data-label="Applied For">{{application.stream_name}} ({{application.specialization}})</td>
                 <td data-label="Status"><span  ng-class="{orange: application.status === 'PENDING',red: application.status === 'REJECTED',green: application.status === 'SELECTED',admitted : application.status === 'ADMITTED'}">{{application.status}}</span></td>
                 <td data-label="">
-                    <button class="btn btn-info" ng-show="application.status==='SELECTED'" ng-click="gotoPayment(application);">Complete Payment</button>
-                    <button class="btn btn-success" title="Download Admit Card" ng-show="application.status==='ADMITTED'" ng-click="goToAdmitCard(application);"><i class="fa fa-lg fa-download"></i></button>
+                    <button class="btn btn-info" ng-show="application.status === 'SELECTED'" ng-click="gotoPayment(application);">Complete Payment</button>
+                    <button class="btn btn-success" title="Download Admit Card" ng-show="application.status === 'ADMITTED'" ng-click="goToAdmitCard(application);"><i class="fa fa-lg fa-download"></i></button>
                     <!--<button class="btn btn-danger" title="Delete Application" ng-click="deleteApplication();" ng-hide="application.status==='SELECTED'"><i class="fa fa-lg fa-trash"></i></button>-->
-                                    </td>
+                </td>
 
             </tr>
 
         </tbody>
     </table>
-    <table ng-show="user.type=='college'">
+    <table ng-show="user.type == 'college'">
         <caption>Applications</caption>
         <thead>
             <tr>
@@ -48,8 +48,8 @@
                 <td data-label="Applied For">{{application.stream_name}} ({{application.specialization}})</td>
                 <td data-label="Status"><span  ng-class="{orange: application.status === 'PENDING',red: application.status === 'REJECTED',green: application.status === 'SELECTED',admitted : application.status === 'ADMITTED'}">{{application.status}}</span></td>
                 <td data-label="">
-                    <button class="btn btn-info" ng-show="application.status==='PENDING'" ng-click="reviewApplication(application);"><i class="fa fa-lg fa-eye"></i> Review Application</button>
-                    <button class="btn btn-info" ng-show="application.status==='PAYMENT DONE'" ng-click="apply();"><i class="fa fa-lg fa-send"></i> Send Admit Card</button>
+                    <button class="btn btn-info" ng-show="application.status === 'PENDING'" ng-click="reviewApplication(application);"><i class="fa fa-lg fa-eye"></i> Review Application</button>
+                    <button class="btn btn-info" ng-show="application.status === 'PAYMENT DONE'" ng-click="apply();"><i class="fa fa-lg fa-send"></i> Send Admit Card</button>
                     <!--<button class="btn btn-danger" title="Delete Application" ng-click="delete();"><i class="fa fa-lg fa-trash"></i></button>-->
                     <!--<button class="btn btn-success" title="View Website"><i class="fa fa-lg fa-globe"></i></button>-->
                 </td>
@@ -59,4 +59,5 @@
         </tbody>
     </table>
     <br>
+    <div class="loading-spiner-holder2" ng-show="loading || false"></div>
 </div>

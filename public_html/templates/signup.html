@@ -50,7 +50,7 @@
                                     <strong>State</strong>
                                     <select class="form-control" ng-model="user.state">
                                         <option disabled="" value="" selected="selected">Select State</option>
-                                     <option ng-repeat="state in statesArrray" value="{{state.name}}">{{state.name}}</option>
+                                        <option ng-repeat="state in statesArrray" value="{{state.name}}">{{state.name}}</option>
                                     </select>
                                 </div>	
                                 <div class="col-sm-4 form-group">
@@ -144,7 +144,7 @@
                                     <strong>State</strong>
                                     <select class="form-control" ng-model="user.state" required="">
                                         <option disabled="" value="" selected="selected">Select State</option>
-                                     <option ng-repeat="state in statesArrray" value="{{state.name}}">{{state.name}}</option>
+                                        <option ng-repeat="state in statesArrray" value="{{state.name}}">{{state.name}}</option>
                                     </select>
                                 </div>	
                                 <div class="col-sm-4 form-group">
@@ -166,9 +166,6 @@
                 </div>
             </div>
         </section>
-
-
-
     </main>
-
+    <div class="loading-spiner-holder2" ng-show="loading || false"></div>
 </div>
